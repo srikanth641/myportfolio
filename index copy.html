@@ -283,7 +283,7 @@
     aspect-ratio:16/8; background:radial-gradient(circle at 50% 40%, #223c60, #0b1a2f);
     display:flex; align-items:center; justify-content:center; position:relative;
   }
-  .project-media img{max-width:90%; max-height:90%; object-fit:contain; opacity:0.85;}
+  .project-media svg{width:38%; opacity:0.85;}
   .project-info{padding:34px 34px 38px;}
   .project-info .kicker{font-size:12px; letter-spacing:2px; color:var(--text-faint); text-transform:uppercase;}
   .project-info h3{font-size:clamp(30px,4vw,44px); margin:8px 0 18px;}
@@ -325,11 +325,10 @@
     text-transform:uppercase; z-index:1;
   }
   .bento .c1{grid-column:span 2; grid-row:span 2;}
-  .bento .c1{background-image:url("Images/images2.jpeg"); background-size:cover; background-position:center;}
-  .bento .c2{grid-column:span 2; grid-row:span 2; background:url("Images/image3.jpeg") center/cover no-repeat;}
-  .bento .c3{grid-column:span 2; grid-row:span 2; background:url("Images/image4.jpeg") center/cover no-repeat;}
+  .bento .c2{grid-column:span 2;}
+  .bento .c3{grid-column:span 2;}
   .bento .c4{grid-column:span 2;}
-  .bento .c5{grid-column:span 2; grid-row:span 2; background:url("Images/image5.jpeg") center/cover no-repeat;}
+  .bento .c5{grid-column:span 4;}
   @media(max-width:880px){
     .bento{grid-template-columns:repeat(2,1fr);}
     .bento .c1,.bento .c2,.bento .c3,.bento .c4,.bento .c5{grid-column:span 2;}
@@ -599,7 +598,14 @@
 
       <div class="project-feature reveal">
         <div class="project-media">
-          <img src="Images/image 1.jpeg" alt="AGV forklift illustration">
+          <svg viewBox="0 0 200 120" fill="none" stroke="currentColor" stroke-width="2" style="color:#7db2ff">
+            <ellipse cx="100" cy="35" rx="70" ry="18"/>
+            <path d="M40 35 L40 70 L160 70 L160 35"/>
+            <rect x="30" y="70" width="140" height="18" rx="3"/>
+            <circle cx="50" cy="98" r="12"/>
+            <circle cx="150" cy="98" r="12"/>
+            <circle cx="100" cy="102" r="14"/>
+          </svg>
         </div>
         <div class="project-info">
           <div class="kicker">Ongoing team project</div>
@@ -681,7 +687,7 @@
         <div class="cell c1 reveal"><span class="cat">CNC</span><span class="cap">Milling a fixture plate</span></div>
         <div class="cell c2 reveal"><span class="cat">Machines</span><span class="cap">Fiber laser cutting bed</span></div>
         <div class="cell c3 reveal"><span class="cat">CAD</span><span class="cap">AGV chassis model</span></div>
-        <div class="cell c5 reveal"><span class="cat">Workshop</span><span class="cap">BIW jigs</span></div>
+        <div class="cell c5 reveal"><span class="cat">Workshop</span><span class="cap">Fixture line on trolleys</span></div>
       </div>
     </div>
   </section>
