@@ -1,0 +1,1286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="IoT session notes on connected devices, sensors, networks, and intelligent manufacturing.">
+  <title>IoT Session · Srikanth A</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#071221;--panel:#0b1a30;--panel-2:#102543;--text:#e8eef9;--dim:#9eb0ca;--faint:#6f82a0;--line:rgba(128,166,215,.18);--strong:rgba(128,166,215,.38);--accent:#4c8dff;--accent-2:#83b5ff}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:linear-gradient(rgba(128,166,215,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(128,166,215,.10) 1px,transparent 1px),radial-gradient(ellipse at 78% 4%,rgba(76,141,255,.18),transparent 38%),var(--bg);background-size:72px 72px,72px 72px,auto,auto;color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    a{color:inherit}
+    .wrap{width:min(1120px,calc(100% - 40px));margin:auto}
+    .nav{padding:26px 0;display:flex;justify-content:space-between;align-items:center;gap:20px;border-bottom:1px solid var(--line)}
+    .brand{font:700 15px 'Space Grotesk',sans-serif;letter-spacing:1.5px;text-decoration:none}
+    .back{color:var(--dim);text-decoration:none;border:1px solid var(--strong);border-radius:999px;padding:10px 16px;font-size:13px;white-space:nowrap;transition:background .2s,color .2s}
+    .back:hover{color:var(--text);background:var(--panel-2)}
+    main{padding:88px 0 96px}
+    .eyebrow{color:var(--accent-2);font:500 12px 'JetBrains Mono',monospace;letter-spacing:1.5px;text-transform:uppercase}
+    h1,h2,h3{font-family:'Space Grotesk',sans-serif;margin:0}
+    h1{font-size:clamp(56px,10vw,112px);line-height:.92;margin:22px 0 26px}
+    .task-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:44px}
+    .task-tab{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:62px;padding:14px 18px;border:1px solid var(--strong);background:rgba(11,26,48,.82);color:var(--dim);font:500 12px 'JetBrains Mono',monospace;cursor:pointer;transition:color .2s,background .2s,border-color .2s,transform .2s}
+    .task-tab:hover{color:var(--text);background:var(--panel-2);border-color:var(--accent-2);transform:translateY(-2px)}
+    .task-tab[aria-selected="true"]{color:var(--text);border-color:var(--accent);background:linear-gradient(145deg,rgba(76,141,255,.26),rgba(76,141,255,.08));box-shadow:inset 0 -2px var(--accent)}
+    .task-tab:focus-visible{outline:2px solid var(--accent-2);outline-offset:-3px}
+    .task-tab .tab-index{color:var(--accent-2);font-size:11px}
+    .task-panel{position:relative;isolation:isolate;display:block;min-height:280px;margin-top:20px;padding:clamp(22px,4vw,48px);overflow:hidden;border:1px solid var(--strong);background:linear-gradient(125deg,rgba(16,37,67,.96),rgba(7,18,33,.94) 68%)}
+    .task-panel::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(rgba(128,166,215,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(128,166,215,.07) 1px,transparent 1px);background-size:38px 38px;mask-image:linear-gradient(90deg,transparent,black)}
+    .task-copy .eyebrow{display:block;margin-bottom:18px}
+    .task-panel h2{font-size:clamp(32px,5vw,56px);line-height:1.05;margin-bottom:20px}
+    .task-count{display:block;margin-top:22px;color:var(--faint);font:12px 'JetBrains Mono',monospace;letter-spacing:1px}
+    .work-stage{display:grid;place-items:center;min-height:240px;padding:24px;border:1px dashed rgba(131,181,255,.48);background:rgba(5,14,27,.58);text-align:center}
+    .work-stage span{color:var(--dim);font:12px 'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase}
+    .task-report{max-width:920px;margin:0 auto}
+    .document-meta{display:flex;justify-content:space-between;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--strong);color:var(--faint);font:11px 'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase}
+    .report-figure figcaption{margin-top:10px;color:var(--faint);font:11px 'JetBrains Mono',monospace;letter-spacing:.7px;text-transform:uppercase}
+    .report-title{font-size:clamp(34px,6vw,68px)!important;margin:12px 0 34px!important}
+    .report-toc{margin:32px 0 42px;padding:22px;border:1px solid var(--line);background:rgba(5,14,27,.52)}
+    .report-toc h3{margin:0 0 16px;color:var(--accent-2);font:500 12px 'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase}
+    .report-toc ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px;margin:0;padding:0;list-style:none;counter-reset:toc}
+    .report-toc li{counter-increment:toc;border-top:1px solid var(--line)}
+    .report-toc a{display:flex;gap:12px;padding:11px 0;color:var(--dim);font-size:13px;text-decoration:none;line-height:1.45;transition:color .2s}
+    .report-toc a::before{content:counter(toc,decimal-leading-zero);color:var(--accent-2);font:11px 'JetBrains Mono',monospace}
+    .report-toc a:hover{color:var(--text)}
+    .report-section{padding:28px 0;border-top:1px solid var(--line);scroll-margin-top:24px}
+    .report-section h3{font-size:24px;margin:0 0 16px}
+    .report-section h4{font:600 16px 'Space Grotesk',sans-serif;margin:22px 0 10px}
+    .report-section p,.report-section li{color:var(--dim);font-size:15px;line-height:1.75}
+    .report-section p+p{margin-top:12px}
+    .report-section ul,.report-section ol{padding-left:22px;margin:10px 0 18px}
+    .report-section li+li{margin-top:6px}
+    .report-callout{margin:18px 0;padding:18px 20px;border-left:3px solid var(--accent);background:rgba(76,141,255,.08);color:var(--text);line-height:1.65}
+    .report-flow{margin:18px 0;padding:18px 20px;border:1px solid var(--strong);color:var(--accent-2);font:500 13px/1.8 'JetBrains Mono',monospace;text-align:center}
+    .report-table-wrap{overflow-x:auto;margin:16px 0}
+    .report-table{width:100%;border-collapse:collapse;min-width:520px;text-align:left}
+    .report-table th,.report-table td{padding:12px 14px;border-bottom:1px solid var(--line);font-size:13px;line-height:1.5}
+    .report-table th{color:var(--accent-2);font-weight:600;background:rgba(128,166,215,.07)}
+    .report-table td{color:var(--dim)}
+    .report-code{overflow-x:auto;margin:16px 0;padding:20px;border:1px solid var(--line);background:#050d18;color:#d6e5ff;font:12px/1.7 'JetBrains Mono',monospace;white-space:pre}
+    .report-figure{margin:24px 0}
+    .report-figure img{display:block;width:100%;max-height:620px;object-fit:contain;border:1px solid var(--strong);background:#050d18}
+    .report-video{display:block;width:100%;max-height:620px;margin:20px 0;background:#050d18;border:1px solid var(--strong)}
+    .repo-tree{margin:16px 0;padding:18px 20px;border:1px solid var(--line);background:rgba(5,14,27,.58);color:var(--dim);font:12px/1.8 'JetBrains Mono',monospace;white-space:pre;overflow-x:auto}
+    .task-panel[hidden]{display:none}
+    [hidden]{display:none!important}
+    footer{padding:24px 0;border-top:1px solid var(--line);color:var(--faint);font-size:12px;letter-spacing:1px;display:flex;justify-content:space-between;gap:16px}
+    @media(max-width:700px){main{padding:60px 0 72px}.task-tabs{gap:8px;margin-top:34px}.task-tab{flex-direction:column;justify-content:center;gap:5px;padding:12px 6px}.task-panel{min-height:0}.work-stage{min-height:200px}.report-section{padding:24px 0}}
+    @media(max-width:480px){.wrap{width:min(100% - 32px,1120px)}.nav{padding:20px 0}.brand{font-size:13px}.back{font-size:12px;padding:9px 12px}.task-tab{font-size:10px}.task-panel{padding:22px 16px}.report-section h3{font-size:21px}.report-code{font-size:11px;padding:15px}.document-meta{flex-direction:column;gap:8px}.report-toc{padding:16px}.report-toc ol{grid-template-columns:1fr}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="nav" aria-label="Page navigation">
+      <a class="brand" href="index.html">SRIKANTH A</a>
+      <a class="back" href="index.html">Back to portfolio</a>
+    </nav>
+    <main>
+      <div class="eyebrow">IOT SESSION</div>
+      <h1>IoT<br>Session.</h1>
+      <div class="task-tabs" role="tablist" aria-label="IoT session tasks">
+        <button class="task-tab" id="task-tab-1" type="button" role="tab" aria-selected="true" aria-controls="task-panel-1" tabindex="0"><span class="tab-index">01</span><span>TASK 1</span></button>
+        <button class="task-tab" id="task-tab-2" type="button" role="tab" aria-selected="false" aria-controls="task-panel-2" tabindex="-1"><span class="tab-index">02</span><span>TASK 2</span></button>
+        <button class="task-tab" id="task-tab-3" type="button" role="tab" aria-selected="false" aria-controls="task-panel-3" tabindex="-1"><span class="tab-index">03</span><span>TASK 3</span></button>
+        <button class="task-tab" id="task-tab-4" type="button" role="tab" aria-selected="false" aria-controls="task-panel-4" tabindex="-1"><span class="tab-index">04</span><span>TASK 4</span></button>
+        <button class="task-tab" id="task-tab-5" type="button" role="tab" aria-selected="false" aria-controls="task-panel-5" tabindex="-1"><span class="tab-index">05</span><span>TASK 5</span></button>
+      </div>
+      <section class="task-panel" id="task-panel-1" role="tabpanel" aria-labelledby="task-tab-1" tabindex="0">
+        <article class="task-report">
+          <div class="document-meta"><span>IoT Session / Task 1</span><span>Project Report</span></div>
+          <h2 class="report-title">ESP32 Web Server &amp; HTML LED Control</h2>
+          <nav class="report-toc" aria-label="Task 1 report contents">
+            <h3>Contents</h3>
+            <ol>
+              <li><a href="#task1-overview">Overview</a></li>
+              <li><a href="#task1-concepts">Concepts</a></li>
+              <li><a href="#task1-design">System Design</a></li>
+              <li><a href="#task1-components">Hardware &amp; Software</a></li>
+              <li><a href="#task1-setup">Wiring / Setup</a></li>
+              <li><a href="#task1-implementation">Implementation</a></li>
+              <li><a href="#task1-interface">HTML Interface</a></li>
+              <li><a href="#task1-communication">Webpage Communication</a></li>
+              <li><a href="#task1-evidence">Evidence</a></li>
+              <li><a href="#task1-challenges">Challenges &amp; Fixes</a></li>
+              <li><a href="#task1-reflection">Reflection</a></li>
+              <li><a href="#task1-repository">Repository</a></li>
+              <li><a href="#task1-result">Final Result</a></li>
+            </ol>
+          </nav>
+
+          <section class="report-section" id="task1-overview">
+            <h3>1. Overview</h3>
+            <h4>Objective</h4>
+            <p>The aim of this task is to build a simple IoT system using an ESP32 that hosts a web server and allows a user to control an LED from a web browser over Wi-Fi.</p>
+            <h4>Problem Being Addressed</h4>
+            <p>An LED connected to a microcontroller is usually controlled by a physical switch or by programmed logic. This project shows how the same LED can be switched on and off remotely through a browser without using a physical button.</p>
+            <h4>Project Summary</h4>
+            <p>In this project, the ESP32 connects to a Wi-Fi network and acts as a small web server. When a user enters the ESP32's IP address into a browser, a simple HTML page appears with ON and OFF buttons. Pressing a button sends an HTTP request to the ESP32, which then updates the LED state accordingly.</p>
+            <div class="report-flow">Browser &rarr; Wi-Fi &rarr; ESP32 Web Server &rarr; GPIO &rarr; LED</div>
+          </section>
+
+          <section class="report-section" id="task1-concepts">
+            <h3>2. Concepts</h3>
+            <h4>ESP32 Web Server</h4>
+            <p>The ESP32 is a Wi-Fi-enabled microcontroller that can act as a small web server. It can receive HTTP requests from devices connected to the same network and respond with HTML content.</p>
+            <p>The ESP32 performs two main functions in this project:</p>
+            <ul><li>Hosts the HTML webpage.</li><li>Controls the LED according to commands received from the browser.</li></ul>
+            <h4>Wi-Fi Communication</h4>
+            <p>The ESP32 connects to a Wi-Fi network using its built-in Wi-Fi module. After connecting, it obtains an IP address from the network. The user enters this IP address into a web browser, which communicates with the ESP32 using HTTP.</p>
+            <h4>HTTP Request</h4>
+            <p>When the user clicks the ON or OFF button, the browser sends an HTTP request to the ESP32.</p>
+            <ul><li><code>/LED=ON</code> turns the LED on.</li><li><code>/LED=OFF</code> turns the LED off.</li></ul>
+            <p>The ESP32 reads the requested path and changes the GPIO output.</p>
+            <h4>HTML Interface</h4>
+            <p>HTML is used to create the control webpage. The webpage contains buttons that allow the user to send commands to the ESP32.</p>
+          </section>
+
+          <section class="report-section" id="task1-design">
+            <h3>3. System Design</h3>
+            <h4>System Architecture</h4>
+            <p>The complete system consists of four main stages:</p>
+            <div class="report-flow">User &rarr; Web Browser &rarr; Wi-Fi Network &rarr; ESP32 &rarr; LED</div>
+            <h4>Data Flow</h4>
+            <ol><li>The ESP32 connects to the Wi-Fi network.</li><li>The ESP32 starts a web server.</li><li>The ESP32 receives an IP address.</li><li>The user enters the IP address in a browser.</li><li>The ESP32 sends the HTML control page to the browser.</li><li>The user clicks the ON or OFF button.</li><li>The browser sends an HTTP request to the ESP32.</li><li>The ESP32 processes the request.</li><li>The ESP32 changes the LED GPIO state.</li><li>The LED turns ON or OFF.</li></ol>
+            <h4>Block Diagram</h4>
+            <div class="report-flow">Laptop / Mobile Browser<br>&darr;<br>Wi-Fi Router / Network<br>&darr;<br>ESP32 Web Server<br>&darr;<br>GPIO Output<br>&darr;<br>LED</div>
+          </section>
+
+          <section class="report-section" id="task1-components">
+            <h3>4. Hardware &amp; Software</h3>
+            <h4>Hardware Components</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Component</th><th>Purpose</th></tr></thead><tbody><tr><td>ESP32 Development Board</td><td>Main IoT controller and web server</td></tr><tr><td>LED</td><td>Output device controlled through the webpage</td></tr><tr><td>Resistor</td><td>Limits current through the LED</td></tr><tr><td>Breadboard</td><td>Used for circuit prototyping</td></tr><tr><td>Jumper Wires</td><td>Electrical connections</td></tr><tr><td>USB Cable</td><td>Programming and powering the ESP32</td></tr><tr><td>Wi-Fi Router / Hotspot</td><td>Provides wireless network connectivity</td></tr></tbody></table></div>
+            <h4>Software and Tools</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Software / Tool</th><th>Purpose</th></tr></thead><tbody><tr><td>Arduino IDE</td><td>Programming and uploading code</td></tr><tr><td>ESP32 Board Package</td><td>Enables ESP32 programming in Arduino IDE</td></tr><tr><td>HTML</td><td>Creates the web control interface</td></tr><tr><td>C/C++</td><td>ESP32 programming language</td></tr><tr><td>Web Browser</td><td>Used to access and control the ESP32</td></tr></tbody></table></div>
+          </section>
+
+          <section class="report-section" id="task1-setup">
+            <h3>5. Wiring / Setup</h3>
+            <p>The LED is connected to a digital GPIO pin of the ESP32 through a current-limiting resistor.</p>
+            <h4>Pin Connection</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>ESP32 Pin</th><th>Connected Component</th><th>Function</th></tr></thead><tbody><tr><td>GPIO 2</td><td>LED</td><td>Digital output</td></tr><tr><td>GND</td><td>LED circuit</td><td>Ground</td></tr><tr><td>3.3 V / GPIO output</td><td>LED circuit</td><td>LED control</td></tr></tbody></table></div>
+            <h4>Circuit Operation</h4>
+            <ul><li>When the ESP32 GPIO is set to HIGH, the LED turns ON.</li><li>When the ESP32 GPIO is set to LOW, the LED turns OFF.</li><li>A resistor is used with the LED to limit the current and protect the LED and GPIO.</li></ul>
+            <p><strong>Note:</strong> If the physical setup uses the ESP32's built-in LED instead of an external LED, the wiring section can be modified to state that no external LED wiring was required.</p>
+          </section>
+
+          <section class="report-section" id="task1-implementation">
+            <h3>6. Implementation</h3>
+            <h4>Program Logic</h4>
+            <ol><li>Define the Wi-Fi network credentials.</li><li>Initialize the LED GPIO.</li><li>Connect the ESP32 to Wi-Fi.</li><li>Start the web server.</li><li>Wait for an HTTP request from the browser.</li><li>Identify whether the request is for LED ON or LED OFF.</li><li>Change the GPIO output.</li><li>Return the updated HTML webpage to the browser.</li></ol>
+            <h4>Complete ESP32 Source Code</h4>
+            <pre class="report-code"><code>#include &lt;WiFi.h&gt;
+
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+WiFiServer server(80);
+const int ledPin = 2;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW);
+
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to Wi-Fi");
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println();
+  Serial.println("Wi-Fi connected");
+  Serial.print("ESP32 IP Address: ");
+  Serial.println(WiFi.localIP());
+  server.begin();
+}
+
+void loop() {
+  WiFiClient client = server.available();
+  if (!client) {
+    return;
+  }
+
+  String request = client.readStringUntil('\r');
+  client.flush();
+
+  if (request.indexOf("GET /LED=ON") &gt;= 0) {
+    digitalWrite(ledPin, HIGH);
+  }
+
+  if (request.indexOf("GET /LED=OFF") &gt;= 0) {
+    digitalWrite(ledPin, LOW);
+  }
+
+  client.println("HTTP/1.1 200 OK");
+  client.println("Content-Type: text/html");
+  client.println("Connection: close");
+  client.println();
+
+  client.println("&lt;!DOCTYPE html&gt;");
+  client.println("&lt;html&gt;");
+  client.println("&lt;head&gt;");
+  client.println("&lt;title&gt;ESP32 LED Control&lt;/title&gt;");
+  client.println("&lt;/head&gt;");
+  client.println("&lt;body&gt;");
+  client.println("&lt;h1&gt;ESP32 LED Control&lt;/h1&gt;");
+  client.println("&lt;p&gt;");
+  client.println("&lt;a href=\"/LED=ON\"&gt;&lt;button&gt;LED ON&lt;/button&gt;&lt;/a&gt;");
+  client.println("&lt;/p&gt;");
+  client.println("&lt;p&gt;");
+  client.println("&lt;a href=\"/LED=OFF\"&gt;&lt;button&gt;LED OFF&lt;/button&gt;&lt;/a&gt;");
+  client.println("&lt;/p&gt;");
+  client.println("&lt;/body&gt;");
+  client.println("&lt;/html&gt;");
+
+  delay(1);
+  client.stop();
+}</code></pre>
+            <figure class="report-figure"><img src="iot%201/t2.jpeg" alt="ESP32 project task image showing the hardware used for the web server LED control"><figcaption>Task 1 / Additional ESP32 project photo</figcaption></figure>
+            <h4>Code Explanation</h4>
+            <p><strong>Wi-Fi Library</strong></p>
+            <pre class="report-code"><code>#include &lt;WiFi.h&gt;</code></pre>
+            <p>This library provides Wi-Fi communication functions for the ESP32.</p>
+            <p><strong>Wi-Fi Credentials</strong></p>
+            <pre class="report-code"><code>const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";</code></pre>
+            <p>These values specify the Wi-Fi network to which the ESP32 connects.</p>
+            <p><strong>LED Pin</strong></p>
+            <pre class="report-code"><code>const int ledPin = 2;</code></pre>
+            <p>GPIO 2 is configured as the digital output for the LED.</p>
+            <p><strong>Web Server</strong></p>
+            <pre class="report-code"><code>WiFiServer server(80);</code></pre>
+            <p>The ESP32 creates a web server on port 80, which is the standard HTTP port.</p>
+            <p><strong>LED Control</strong></p>
+            <pre class="report-code"><code>if (request.indexOf("GET /LED=ON") &gt;= 0) {
+  digitalWrite(ledPin, HIGH);
+}</code></pre>
+            <p>When the ESP32 receives the ON request, it sets the LED GPIO HIGH. Similarly, the OFF request sets the GPIO LOW and turns the LED off:</p>
+            <pre class="report-code"><code>if (request.indexOf("GET /LED=OFF") &gt;= 0) {
+  digitalWrite(ledPin, LOW);
+}</code></pre>
+          </section>
+
+          <section class="report-section" id="task1-interface">
+            <h3>7. HTML Interface</h3>
+            <p>The ESP32 generates a simple HTML webpage containing two control buttons.</p>
+            <h4>Web Interface</h4>
+            <ul><li>LED ON button</li><li>LED OFF button</li></ul>
+            <p>The relevant HTML is:</p>
+            <pre class="report-code"><code>&lt;a href="/LED=ON"&gt;
+  &lt;button&gt;LED ON&lt;/button&gt;
+&lt;/a&gt;
+
+&lt;a href="/LED=OFF"&gt;
+  &lt;button&gt;LED OFF&lt;/button&gt;
+&lt;/a&gt;</code></pre>
+            <p>When the user clicks LED ON, the browser requests <code>/LED=ON</code>. When the user clicks LED OFF, the browser requests <code>/LED=OFF</code>. The ESP32 identifies these requests and controls the LED accordingly.</p>
+          </section>
+
+          <section class="report-section" id="task1-communication">
+            <h3>8. How the Webpage Communicates with ESP32</h3>
+            <h4>ON Command</h4>
+            <div class="report-flow">User clicks LED ON &rarr; Browser sends HTTP request &rarr; GET /LED=ON &rarr; ESP32 receives request &rarr; GPIO 2 = HIGH &rarr; LED turns ON</div>
+            <h4>OFF Command</h4>
+            <div class="report-flow">User clicks LED OFF &rarr; Browser sends HTTP request &rarr; GET /LED=OFF &rarr; ESP32 receives request &rarr; GPIO 2 = LOW &rarr; LED turns OFF</div>
+            <p>The browser and ESP32 must be connected to the same local network for this setup.</p>
+          </section>
+
+          <section class="report-section" id="task1-evidence">
+            <h3>9. Evidence</h3>
+            <h4>Web Interface Screenshots</h4>
+            <p>The following screenshots were used to show the control page and LED states during testing:</p>
+            <ul><li>ESP32 IP address in the browser</li><li>Web control interface</li><li>LED ON state</li><li>LED OFF state</li></ul>
+            <figure class="report-figure"><img src="iot%201/t4.jpeg" alt="ESP32 board with indicator lights illuminated during the project demonstration"><figcaption>ESP32 powered on during the demonstration</figcaption></figure>
+            <h4>Demonstration Video</h4>
+            <video class="report-video" controls preload="metadata" aria-label="ESP32 web server and LED control demonstration video"><source src="iot%201/t3.mp4" type="video/mp4">Your browser does not support embedded video. <a href="iot%201/t3.mp4">Open the demonstration video</a>.</video>
+          </section>
+
+          <section class="report-section" id="task1-challenges">
+            <h3>10. Challenges &amp; Fixes</h3>
+            <h4>Challenge 1 — ESP32 Could Not Connect to Wi-Fi</h4>
+            <p><strong>Problem:</strong> The ESP32 remained in the Wi-Fi connection loop.</p>
+            <p><strong>Solution:</strong> The Wi-Fi SSID and password were checked and the ESP32 was placed within the Wi-Fi network range.</p>
+            <h4>Challenge 2 — Webpage Could Not Be Opened</h4>
+            <p><strong>Problem:</strong> The browser could not access the ESP32 server.</p>
+            <p><strong>Solution:</strong> The IP address printed in the Arduino Serial Monitor was checked, and the computer/mobile device was connected to the same Wi-Fi network as the ESP32.</p>
+            <h4>Challenge 3 — LED Did Not Respond</h4>
+            <p><strong>Problem:</strong> The LED did not change state when the button was pressed.</p>
+            <p><strong>Solution:</strong> The GPIO pin configuration and LED wiring were checked. The ON and OFF HTTP request paths were also verified.</p>
+            <h4>Challenge 4 — Incorrect IP Address</h4>
+            <p><strong>Problem:</strong> The ESP32's IP address can change when it reconnects to the network.</p>
+            <p><strong>Solution:</strong> The current IP address was read from the Serial Monitor after each Wi-Fi connection.</p>
+          </section>
+
+          <section class="report-section" id="task1-reflection">
+            <h3>11. Reflection</h3>
+            <p>This task helped me understand the basic working principle of an IoT web-based control system. I learned how an ESP32 can connect to a Wi-Fi network and operate as a web server. I also learned how a browser can communicate with a microcontroller using HTTP requests and how HTML buttons can be used to control a physical output.</p>
+            <p>The project gave me practical experience in ESP32 programming, Wi-Fi communication, HTTP requests, HTML interfaces, GPIO control, and basic IoT system architecture. This forms a foundation for more advanced IoT applications involving sensors, cloud platforms, dashboards, and remote device control.</p>
+          </section>
+
+          <section class="report-section" id="task1-repository">
+            <h3>12. Repository</h3>
+            <p>The complete project files, source code, circuit information, and documentation are available in the project repository.</p>
+            <p><strong>Repository:</strong> Add your GitHub repository link when available.</p>
+            <h4>Recommended Repository Structure</h4>
+            <pre class="repo-tree">Task-1-ESP32-Web-Server/
+├── ESP32_Web_Server.ino
+├── README.md
+├── circuit/
+│   └── circuit-diagram.png
+├── screenshots/
+│   ├── web-interface.png
+│   ├── led-on.png
+│   └── led-off.png
+├── photos/
+│   └── physical-setup.jpg
+└── video/
+    └── demo-link.txt</pre>
+          </section>
+
+          <section class="report-section" id="task1-result">
+            <h3>Final Result</h3>
+            <p>The completed system successfully demonstrates web-based LED control using an ESP32. The ESP32 connects to Wi-Fi, hosts an HTML control webpage, receives HTTP commands from the browser, and changes the LED state according to the user's input.</p>
+            <div class="report-flow">Web Browser &rarr; Wi-Fi &rarr; ESP32 Web Server &rarr; GPIO &rarr; LED</div>
+          </section>
+        </article>
+      </section>
+      <section class="task-panel" id="task-panel-2" role="tabpanel" aria-labelledby="task-tab-2" tabindex="0" hidden>
+        <article class="task-report">
+          <div class="document-meta"><span>IoT Session / Task 2</span><span>Project Report</span></div>
+          <h2 class="report-title">Adafruit IO Dashboard &amp; MQTT</h2>
+          <nav class="report-toc" aria-label="Task 2 report contents">
+            <h3>Contents</h3>
+            <ol>
+              <li><a href="#task2-overview">Overview</a></li>
+              <li><a href="#task2-concepts">Concepts</a></li>
+              <li><a href="#task2-design">System Design</a></li>
+              <li><a href="#task2-components">Hardware &amp; Software</a></li>
+              <li><a href="#task2-account">Adafruit IO Account</a></li>
+              <li><a href="#task2-dashboard">Dashboard Configuration</a></li>
+              <li><a href="#task2-wiring">Wiring / Setup</a></li>
+              <li><a href="#task2-communication">MQTT Communication</a></li>
+              <li><a href="#task2-feed">Feed Structure</a></li>
+              <li><a href="#task2-implementation">Rust Implementation</a></li>
+              <li><a href="#task2-evidence">Evidence &amp; Demo</a></li>
+              <li><a href="#task2-challenges">Challenges &amp; Fixes</a></li>
+              <li><a href="#task2-reflection">Reflection</a></li>
+              <li><a href="#task2-repository">Repository</a></li>
+              <li><a href="#task2-result">Final Result</a></li>
+            </ol>
+          </nav>
+
+          <section class="report-section" id="task2-overview">
+            <h3>1. Overview</h3>
+            <h4>Objective</h4>
+            <p>The aim of this task was to build a cloud-connected IoT system using an ESP32-C3, Rust firmware, MQTT, and Adafruit IO. A remote dashboard sends commands that the device uses to switch an LED.</p>
+            <h4>Problem Being Addressed</h4>
+            <p>In Task 1, the ESP32 hosted a webpage and the browser generally needed to be on the same local network. This task adds cloud messaging, so a dashboard can send a command through Adafruit IO rather than connecting directly to a device-hosted page.</p>
+            <h4>Project Summary</h4>
+            <p>The ESP32-C3 joins a Wi-Fi network, authenticates with the Adafruit IO MQTT broker, and subscribes to an LED-control feed. The dashboard publishes <code>ON</code> or <code>OFF</code>; the Rust application handles the received payload and updates the configured LED GPIO.</p>
+            <div class="report-flow">Adafruit IO Dashboard &rarr; MQTT Broker &rarr; ESP32-C3 (Rust) &rarr; GPIO &rarr; LED</div>
+            <div class="report-callout"><strong>Platform note:</strong> This report describes the ESP32-C3 programmed in Rust. GPIO numbering, the onboard LED, and the Rust HAL/API depend on the exact development board and project configuration.</div>
+          </section>
+
+          <section class="report-section" id="task2-concepts">
+            <h3>2. Concepts</h3>
+            <h4>Adafruit IO</h4>
+            <p>Adafruit IO is a cloud IoT service for exchanging and visualizing device data. It provides feeds, dashboards, and MQTT access. Here, a dashboard control publishes commands to the LED feed.</p>
+            <h4>MQTT</h4>
+            <p>MQTT (Message Queuing Telemetry Transport) is a lightweight publish/subscribe messaging protocol. A publisher sends a message to a topic, and a broker routes it to clients subscribed to that topic.</p>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>MQTT role</th><th>Role in this project</th></tr></thead><tbody><tr><td>Publisher</td><td>The Adafruit IO dashboard publishes the selected LED command.</td></tr><tr><td>Broker</td><td>Adafruit IO receives and routes MQTT messages.</td></tr><tr><td>Subscriber</td><td>The ESP32-C3 Rust application subscribes to the LED feed.</td></tr><tr><td>Feed / topic</td><td>The named communication channel carrying the LED command.</td></tr></tbody></table></div>
+            <p>Adafruit IO calls its data channels <em>feeds</em>. The MQTT topic for a feed follows the account-specific path <code>username/feeds/bulb-control</code>.</p>
+          </section>
+
+          <section class="report-section" id="task2-design">
+            <h3>3. System Design</h3>
+            <h4>System Architecture</h4>
+            <div class="report-flow">User &rarr; Adafruit IO Dashboard &rarr; Adafruit IO MQTT Broker &rarr; ESP32-C3 Rust Client &rarr; LED GPIO &rarr; LED</div>
+            <h4>Data Flow</h4>
+            <ol><li>The ESP32-C3 connects to Wi-Fi with Internet access.</li><li>The Rust application connects and authenticates with the Adafruit IO MQTT service.</li><li>The device subscribes to the account's <code>bulb-control</code> feed.</li><li>The user changes the control on the Adafruit IO dashboard.</li><li>The dashboard publishes the selected value to the feed.</li><li>The broker forwards the message to the subscribed device.</li><li>The Rust application checks the payload and sets the configured GPIO output.</li></ol>
+            <h4>Communication Diagram</h4>
+            <div class="report-flow">INTERNET<br>&darr;<br>Adafruit IO Dashboard<br>&darr; Publish command<br>Adafruit IO MQTT Broker<br>&darr; Feed message<br>ESP32-C3 MQTT subscriber (Rust)<br>&darr; Configured GPIO<br>LED</div>
+          </section>
+
+          <section class="report-section" id="task2-components">
+            <h3>4. Hardware &amp; Software</h3>
+            <h4>Hardware Components</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Component</th><th>Purpose</th></tr></thead><tbody><tr><td>ESP32-C3 development board</td><td>Wi-Fi IoT controller running the Rust application</td></tr><tr><td>LED</td><td>Output controlled from the cloud dashboard</td></tr><tr><td>Current-limiting resistor</td><td>Limits current through an external LED</td></tr><tr><td>Breadboard and jumper wires</td><td>Prototyping and circuit connections, if an external LED is used</td></tr><tr><td>USB cable</td><td>Power and firmware programming</td></tr><tr><td>Wi-Fi router / hotspot</td><td>Internet connection for MQTT communication</td></tr></tbody></table></div>
+            <h4>Software and Platforms</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Software / platform</th><th>Purpose</th></tr></thead><tbody><tr><td>Rust</td><td>Firmware language for Wi-Fi, MQTT, and GPIO control</td></tr><tr><td>ESP-IDF Rust ecosystem</td><td>ESP32-C3 target support and access to device services</td></tr><tr><td>esp-idf-svc / esp-idf-hal</td><td>Rust crates commonly used for Wi-Fi/MQTT services and hardware peripherals; exact dependencies depend on the project</td></tr><tr><td>Adafruit IO</td><td>Cloud feeds, dashboard controls, and MQTT broker</td></tr><tr><td>MQTT</td><td>Publish/subscribe messaging between dashboard and device</td></tr><tr><td>Cargo and ESP flashing tools</td><td>Build and upload the Rust firmware, depending on the configured toolchain</td></tr><tr><td>Web browser</td><td>Access to the Adafruit IO dashboard</td></tr></tbody></table></div>
+            <figure class="report-figure"><img src="iot%202/t2.4.png" alt="Task 2 project evidence showing the ESP32-C3 and IoT setup"><figcaption>Task 2 / ESP32-C3 project setup</figcaption></figure>
+          </section>
+
+          <section class="report-section" id="task2-account">
+            <h3>5. Adafruit IO Account &amp; Feed</h3>
+            <h4>Account Configuration</h4>
+            <p>An Adafruit IO account provides the username, AIO key, feeds, dashboard, and MQTT access needed by the project. The AIO key is a secret credential and should be stored privately, not published in source code or screenshots.</p>
+            <figure class="report-figure"><img src="iot%202/t2.1.png" alt="Adafruit IO account or dashboard setup for the IoT project"><figcaption>Adafruit IO account setup</figcaption></figure>
+            <h4>Create an MQTT Feed</h4>
+            <p>A feed named <code>bulb-control</code> was used as the command channel between the dashboard and ESP32-C3.</p>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Feed setting</th><th>Value / purpose</th></tr></thead><tbody><tr><td>Feed name</td><td><code>bulb-control</code></td></tr><tr><td>ON command</td><td><code>ON</code></td></tr><tr><td>OFF command</td><td><code>OFF</code></td></tr><tr><td>Device action</td><td>Set the configured LED GPIO on or off</td></tr></tbody></table></div>
+            <figure class="report-figure"><img src="iot%202/t2.2.png" alt="Adafruit IO bulb-control feed configuration"><figcaption>Adafruit IO / bulb-control feed</figcaption></figure>
+          </section>
+
+          <section class="report-section" id="task2-dashboard">
+            <h3>6. Dashboard Configuration</h3>
+            <p>An Adafruit IO dashboard provides the browser-based control interface. Its control widget is connected to the <code>bulb-control</code> feed.</p>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>User action</th><th>Published feed value</th><th>Device behavior</th></tr></thead><tbody><tr><td>Select ON</td><td><code>ON</code></td><td>Set LED output active</td></tr><tr><td>Select OFF</td><td><code>OFF</code></td><td>Set LED output inactive</td></tr></tbody></table></div>
+            <figure class="report-figure"><img src="iot%202/t2.3.png" alt="Adafruit IO dashboard configured for remote LED control"><figcaption>Adafruit IO / LED control dashboard</figcaption></figure>
+          </section>
+
+          <section class="report-section" id="task2-wiring">
+            <h3>7. Wiring / Setup</h3>
+            <p>The LED output is driven by a GPIO configured in the ESP32-C3 Rust firmware. Use the GPIO connected in the actual circuit; do not assume that GPIO 2 or an onboard LED is available on every ESP32-C3 board.</p>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Connection</th><th>Component</th><th>Function</th></tr></thead><tbody><tr><td>Configured ESP32-C3 GPIO</td><td>LED (through a resistor if external)</td><td>Digital output</td></tr><tr><td>GND</td><td>LED circuit</td><td>Ground return</td></tr><tr><td>USB</td><td>Development board</td><td>Power and programming</td></tr></tbody></table></div>
+            <div class="report-flow">ESP32-C3 configured GPIO &rarr; Resistor &rarr; LED &rarr; GND</div>
+            <p>The application sets the output to its active state for <code>ON</code> and inactive state for <code>OFF</code>. Some onboard LEDs are active-low, so the firmware's logical ON/OFF mapping must match the board.</p>
+          </section>
+
+          <section class="report-section" id="task2-communication">
+            <h3>8. MQTT Communication Flow</h3>
+            <div class="report-flow">User &rarr; Dashboard publishes &rarr; bulb-control feed &rarr; Adafruit IO broker &rarr; ESP32-C3 subscriber &rarr; Rust payload handler &rarr; LED GPIO</div>
+            <h4>LED ON</h4>
+            <div class="report-flow">Select ON &rarr; Dashboard publishes <code>ON</code> &rarr; Broker routes feed message &rarr; ESP32-C3 receives it &rarr; Rust sets LED output active</div>
+            <h4>LED OFF</h4>
+            <div class="report-flow">Select OFF &rarr; Dashboard publishes <code>OFF</code> &rarr; Broker routes feed message &rarr; ESP32-C3 receives it &rarr; Rust sets LED output inactive</div>
+          </section>
+
+          <section class="report-section" id="task2-feed">
+            <h3>9. MQTT Feed Structure</h3>
+            <p>The MQTT topic for an Adafruit IO feed uses the account username and feed key:</p>
+            <pre class="report-code"><code>YOUR_ADAFRUIT_USERNAME/feeds/bulb-control</code></pre>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Parameter</th><th>Project value</th></tr></thead><tbody><tr><td>Broker</td><td>Adafruit IO MQTT service</td></tr><tr><td>Transport</td><td>Wi-Fi / Internet</td></tr><tr><td>Feed</td><td><code>bulb-control</code></td></tr><tr><td>Publisher</td><td>Adafruit IO dashboard</td></tr><tr><td>Subscriber</td><td>ESP32-C3 Rust application</td></tr><tr><td>Payload</td><td><code>ON</code> or <code>OFF</code></td></tr><tr><td>Authentication</td><td>Adafruit IO username and private AIO key</td></tr></tbody></table></div>
+            <figure class="report-figure"><img src="iot%202/t2.5.png" alt="Task 2 MQTT or Adafruit IO configuration evidence"><figcaption>Task 2 / MQTT and feed configuration</figcaption></figure>
+          </section>
+
+          <section class="report-section" id="task2-implementation">
+            <h3>10. Rust Implementation</h3>
+            <p>The firmware is written in Rust for the ESP32-C3. In an ESP-IDF-based Rust project, Wi-Fi and MQTT services are commonly provided through the ESP-IDF Rust crates, while GPIO access is provided through the matching HAL. The exact initialization and event APIs depend on the project's crate versions and board configuration.</p>
+            <h4>Firmware Responsibilities</h4>
+            <ol><li>Load Wi-Fi and Adafruit IO credentials from private configuration.</li><li>Initialize the ESP32-C3 peripherals and the LED output pin.</li><li>Connect to Wi-Fi with Internet access.</li><li>Connect to the Adafruit IO MQTT broker and subscribe to the account's feed topic.</li><li>Read incoming MQTT payloads and recognize <code>ON</code> and <code>OFF</code>.</li><li>Update the LED output and report connection or command status for debugging.</li><li>Reconnect or resubscribe if the MQTT connection is lost.</li></ol>
+            <h4>Configuration Values</h4>
+            <pre class="report-code"><code>// Rust configuration pattern; keep real credentials out of source control.
+const WIFI_SSID: &amp;str = "YOUR_WIFI_NAME";
+const WIFI_PASSWORD: &amp;str = "YOUR_WIFI_PASSWORD";
+const AIO_USERNAME: &amp;str = "YOUR_ADAFRUIT_USERNAME";
+const AIO_KEY: &amp;str = "YOUR_PRIVATE_ADAFRUIT_IO_KEY";
+const AIO_HOST: &amp;str = "io.adafruit.com";
+const FEED_KEY: &amp;str = "bulb-control";
+// Set the LED GPIO to the pin used by the actual ESP32-C3 board/circuit.</code></pre>
+            <h4>Command Handling Logic</h4>
+            <pre class="report-code"><code>fn led_command(payload: &amp;str) -&gt; Option&lt;bool&gt; {
+    match payload.trim() {
+        "ON" =&gt; Some(true),
+        "OFF" =&gt; Some(false),
+        _ =&gt; None,
+    }
+}
+
+// In the MQTT event handler:
+// - decode the received payload as UTF-8
+// - call led_command(payload)
+// - set the configured GPIO high/low for the board's LED polarity
+// - ignore or log values other than ON and OFF</code></pre>
+            <div class="report-callout"><strong>Source-code accuracy:</strong> The snippets show the Rust configuration and command-processing pattern, not a verified drop-in firmware file. The actual Wi-Fi/MQTT setup code and GPIO type should follow the ESP-IDF Rust crate versions and GPIO used in your ESP32-C3 project.</div>
+            <h4>Key Rust Firmware Sections</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Firmware section</th><th>Purpose</th></tr></thead><tbody><tr><td>Wi-Fi setup</td><td>Associates the ESP32-C3 with the configured network.</td></tr><tr><td>MQTT client configuration</td><td>Sets the Adafruit IO host and authenticates with username and AIO key.</td></tr><tr><td>Feed subscription</td><td>Subscribes to <code>username/feeds/bulb-control</code>.</td></tr><tr><td>MQTT event handling</td><td>Reads and validates messages delivered to the subscribed feed.</td></tr><tr><td>GPIO output</td><td>Applies the ON/OFF command to the board's configured LED pin.</td></tr></tbody></table></div>
+          </section>
+
+          <section class="report-section" id="task2-evidence">
+            <h3>11. Evidence &amp; Demonstration</h3>
+            <p>The supplied images document the Adafruit IO setup and project configuration.</p>
+            <figure class="report-figure"><img src="iot%202/t2.1.png" alt="Adafruit IO account setup screenshot"><figcaption>Account configuration</figcaption></figure>
+            <figure class="report-figure"><img src="iot%202/t2.2.png" alt="Adafruit IO bulb-control feed screenshot"><figcaption>LED command feed</figcaption></figure>
+            <figure class="report-figure"><img src="iot%202/t2.3.png" alt="Adafruit IO dashboard screenshot"><figcaption>Dashboard control</figcaption></figure>
+            <figure class="report-figure"><img src="iot%202/t2.4.png" alt="ESP32-C3 project hardware and setup photograph"><figcaption>ESP32-C3 project setup</figcaption></figure>
+            <figure class="report-figure"><img src="iot%202/t2.5.png" alt="MQTT project configuration screenshot"><figcaption>MQTT / feed configuration</figcaption></figure>
+            <h4>Demonstration Video</h4>
+            <p>The demonstration video is included below.</p>
+            <video class="report-video" controls preload="metadata" aria-label="ESP32-C3 Rust and Adafruit IO MQTT LED control demonstration"><source src="iot%202/t2.6.mp4" type="video/mp4">Your browser does not support embedded video. <a href="iot%202/t2.6.mp4">Open the Task 2 demonstration video</a>.</video>
+          </section>
+
+          <section class="report-section" id="task2-challenges">
+            <h3>12. Challenges &amp; Fixes</h3>
+            <h4>MQTT Connection Failure</h4><p><strong>Problem:</strong> The ESP32-C3 could not connect to Adafruit IO. <strong>Checks:</strong> Confirm Wi-Fi Internet access, broker hostname, network availability, and MQTT client configuration.</p>
+            <h4>Feed Subscription Mismatch</h4><p><strong>Problem:</strong> The device connected but did not receive dashboard commands. <strong>Checks:</strong> Verify the account username, feed key, and complete topic path: <code>username/feeds/bulb-control</code>.</p>
+            <h4>Authentication Error</h4><p><strong>Problem:</strong> Adafruit IO rejected the client. <strong>Checks:</strong> Confirm the account username and current AIO key, and keep the key private.</p>
+            <h4>LED Did Not Respond</h4><p><strong>Problem:</strong> A message arrived but the LED state did not change. <strong>Checks:</strong> Verify payload decoding, configured ESP32-C3 GPIO, wiring, and whether the board LED is active-high or active-low.</p>
+            <h4>Rust Target or Peripheral Configuration</h4><p><strong>Problem:</strong> Firmware build or GPIO initialization did not match the board. <strong>Checks:</strong> Confirm the ESP32-C3 Rust target, ESP-IDF/toolchain setup, crate versions, and pin mapping for the specific board.</p>
+          </section>
+
+          <section class="report-section" id="task2-reflection">
+            <h3>13. Learning Reflection</h3>
+            <p>This task introduced cloud-based control using MQTT and Adafruit IO. I learned how a dashboard publishes a feed value, how a broker routes it to a subscribed device, and how an ESP32-C3 can act on that message.</p>
+            <p>Programming the ESP32-C3 in Rust also connected the cloud workflow to embedded Rust concepts: configuring the target and peripherals, handling service events, parsing command payloads, and controlling a GPIO. Compared with the local web-server task, this design enables control through an Internet-connected cloud service rather than relying on direct access to the device's local webpage.</p>
+          </section>
+
+          <section class="report-section" id="task2-repository">
+            <h3>14. Repository</h3>
+            <p>The project repository can contain the Rust firmware, board/toolchain configuration, circuit information, screenshots, and demonstration video. Add the actual repository URL when available; do not include Wi-Fi passwords or the AIO key.</p>
+            <p><strong>Repository:</strong> Add your GitHub repository link when available.</p>
+            <h4>Suggested Structure</h4>
+            <pre class="repo-tree">task-2-adafruit-io-mqtt/
+├── Cargo.toml
+├── Cargo.lock
+├── src/
+│   └── main.rs
+├── README.md
+├── circuit/
+│   └── circuit-diagram.png
+├── screenshots/
+│   ├── adafruit-account.png
+│   ├── bulb-control-feed.png
+│   └── dashboard.png
+├── photos/
+│   └── esp32-c3-setup.jpg
+└── video/
+    └── demo.mp4</pre>
+          </section>
+
+          <section class="report-section" id="task2-result">
+            <h3>15. Final Result</h3>
+            <p>The completed system demonstrates cloud-based LED control using an ESP32-C3 programmed in Rust. The device connects to Wi-Fi, subscribes to the Adafruit IO <code>bulb-control</code> feed, and updates its configured LED output when the dashboard publishes <code>ON</code> or <code>OFF</code>.</p>
+            <div class="report-flow">Adafruit IO Dashboard &rarr; MQTT Broker &rarr; ESP32-C3 Rust Firmware &rarr; GPIO &rarr; LED</div>
+          </section>
+        </article>
+      </section>
+      <section class="task-panel" id="task-panel-3" role="tabpanel" aria-labelledby="task-tab-3" tabindex="0" hidden>
+        <article class="task-report">
+          <div class="document-meta"><span>IoT Session / Task 3</span><span>Project Report</span></div>
+          <h2 class="report-title">Siri Voice Control with IFTTT &amp; MQTT</h2>
+          <nav class="report-toc" aria-label="Task 3 report contents">
+            <h3>Contents</h3>
+            <ol>
+              <li><a href="#task3-overview">Overview</a></li>
+              <li><a href="#task3-concepts">Concepts</a></li>
+              <li><a href="#task3-adafruit">Adafruit IO Role</a></li>
+              <li><a href="#task3-design">System Design</a></li>
+              <li><a href="#task3-components">Hardware &amp; Software</a></li>
+              <li><a href="#task3-applet">Siri &amp; IFTTT Configuration</a></li>
+              <li><a href="#task3-flow">Voice-to-Device Flow</a></li>
+              <li><a href="#task3-feed">Adafruit IO Feed</a></li>
+              <li><a href="#task3-wiring">Wiring / Setup</a></li>
+              <li><a href="#task3-implementation">Rust Implementation</a></li>
+              <li><a href="#task3-automation">Automation Example</a></li>
+              <li><a href="#task3-evidence">Evidence &amp; Demo</a></li>
+              <li><a href="#task3-testing">Testing</a></li>
+              <li><a href="#task3-challenges">Challenges &amp; Solutions</a></li>
+              <li><a href="#task3-reflection">Reflection</a></li>
+              <li><a href="#task3-repository">Repository</a></li>
+              <li><a href="#task3-result">Final Result</a></li>
+            </ol>
+          </nav>
+
+          <section class="report-section" id="task3-overview">
+            <h3>1. Overview</h3>
+            <h4>Objective</h4>
+            <p>This task demonstrates voice-initiated IoT automation. Saying <strong>“Hey Siri, switch on light”</strong> starts the configured Siri shortcut / IFTTT workflow. IFTTT updates an Adafruit IO feed, and the ESP32-C3 receives that command over MQTT and switches the LED using Rust firmware.</p>
+            <h4>Problem Being Addressed</h4>
+            <p>Dashboard control requires a user to open an app or webpage and operate a control manually. Voice automation makes the interaction hands-free: a spoken phrase starts a cloud workflow that carries the command to the device.</p>
+            <h4>Project Summary</h4>
+            <p>Siri recognizes the configured phrase and invokes the associated shortcut or Applet trigger. IFTTT performs the cloud action that writes the command to the Adafruit IO <code>bulb-control</code> feed. The ESP32-C3 Rust application subscribes to that feed and sets the configured LED output when it receives the command.</p>
+            <div class="report-flow">“Hey Siri, switch on light” &rarr; Siri Shortcut / IFTTT &rarr; Adafruit IO Feed &rarr; MQTT &rarr; ESP32-C3 (Rust) &rarr; LED</div>
+            <div class="report-callout"><strong>Important distinction:</strong> Siri and IFTTT handle the voice trigger and cloud automation. The ESP32-C3 does not recognize speech; it receives the resulting feed value over MQTT. The ESP32-C3 GPIO and Rust toolchain details depend on the actual board and project configuration.</div>
+          </section>
+
+          <section class="report-section" id="task3-concepts">
+            <h3>2. Concepts</h3>
+            <h4>IoT Automation</h4>
+            <p>IoT automation connects an event to a device action through a predefined workflow. Instead of manually changing a dashboard control, a voice phrase can initiate the workflow and cause the remote device to respond.</p>
+            <h4>IFTTT</h4>
+            <p>IFTTT means “If This Then That.” An Applet links a trigger (the “This”) to an action (the “That”). In this experiment, a Siri phrase or shortcut starts the configured automation, and its action updates the Adafruit IO feed.</p>
+            <h4>Trigger and Action</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Stage</th><th>Task 3 behavior</th></tr></thead><tbody><tr><td>Voice trigger</td><td>Say “Hey Siri, switch on light” to invoke the configured Siri shortcut / IFTTT workflow.</td></tr><tr><td>IFTTT action</td><td>Send the selected command to the Adafruit IO <code>bulb-control</code> feed.</td></tr><tr><td>Device response</td><td>ESP32-C3 receives the MQTT value and updates its LED GPIO.</td></tr></tbody></table></div>
+            <h4>MQTT</h4>
+            <p>MQTT is a lightweight publish/subscribe protocol. Adafruit IO provides the broker and feed; the Rust application on the ESP32-C3 subscribes to the feed and handles new values.</p>
+          </section>
+
+          <section class="report-section" id="task3-adafruit">
+            <h3>3. Role of Adafruit IO</h3>
+            <p>Adafruit IO is the cloud handoff between IFTTT and the ESP32-C3. IFTTT updates a feed with the command, while the device receives the new feed value through its MQTT subscription.</p>
+            <div class="report-flow">Siri / IFTTT action &rarr; Adafruit IO &rarr; <code>bulb-control</code> feed &rarr; MQTT broker &rarr; ESP32-C3</div>
+            <p>When the feed receives <code>ON</code>, the Rust firmware sets the configured LED output to its active state. An <code>OFF</code> value sets it inactive if an off phrase/action is configured.</p>
+          </section>
+
+          <section class="report-section" id="task3-design">
+            <h3>4. System Design</h3>
+            <h4>Overall Architecture</h4>
+            <div class="report-flow">User speaks trigger phrase<br>&darr;<br>Siri Shortcut / IFTTT Applet<br>&darr; Automation action<br>Adafruit IO <code>bulb-control</code> feed<br>&darr; MQTT message<br>ESP32-C3 Rust subscriber<br>&darr; Configured GPIO<br>LED</div>
+            <h4>Data Flow</h4>
+            <ol><li>The ESP32-C3 joins a Wi-Fi network with Internet access.</li><li>The Rust firmware connects to Adafruit IO and subscribes to the LED feed.</li><li>The user says “Hey Siri, switch on light.”</li><li>Siri invokes the configured shortcut or voice-triggered Applet.</li><li>IFTTT runs its action and publishes the command to Adafruit IO.</li><li>The MQTT broker forwards the feed update to the subscribed ESP32-C3.</li><li>The Rust application processes the payload and changes the LED GPIO state.</li></ol>
+            <h4>Responsibilities by System Part</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>System part</th><th>Responsibility</th></tr></thead><tbody><tr><td>Siri</td><td>Recognizes the spoken phrase and invokes the configured shortcut.</td></tr><tr><td>IFTTT</td><td>Runs the trigger-to-action automation.</td></tr><tr><td>Adafruit IO</td><td>Stores the command in a feed and routes MQTT messages.</td></tr><tr><td>ESP32-C3 Rust firmware</td><td>Subscribes to the feed, interprets the payload, and controls the output.</td></tr><tr><td>LED</td><td>Physical output showing the result of the automation.</td></tr></tbody></table></div>
+          </section>
+
+          <section class="report-section" id="task3-components">
+            <h3>5. Hardware &amp; Software</h3>
+            <h4>Hardware Components</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Component</th><th>Purpose</th></tr></thead><tbody><tr><td>ESP32-C3 development board</td><td>Runs the Rust firmware and connects to Wi-Fi.</td></tr><tr><td>LED</td><td>Output switched by the voice automation.</td></tr><tr><td>Resistor</td><td>Limits current if an external LED is used.</td></tr><tr><td>Breadboard and jumper wires</td><td>Prototyping connections for an external LED.</td></tr><tr><td>USB cable</td><td>Board power and firmware programming.</td></tr><tr><td>Wi-Fi network</td><td>Internet connectivity for IFTTT / Adafruit IO communication.</td></tr><tr><td>Siri-enabled Apple device</td><td>Captures the voice phrase and invokes the configured shortcut.</td></tr></tbody></table></div>
+            <h4>Software and Cloud Platforms</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Platform / software</th><th>Purpose</th></tr></thead><tbody><tr><td>Rust</td><td>ESP32-C3 firmware language.</td></tr><tr><td>ESP-IDF Rust ecosystem</td><td>ESP32-C3 target, Wi-Fi, MQTT, and GPIO support according to the project configuration.</td></tr><tr><td>Siri Shortcuts</td><td>Voice phrase used to invoke the automation on the Apple device.</td></tr><tr><td>IFTTT</td><td>Connects the voice-triggered event to an IoT cloud action.</td></tr><tr><td>Adafruit IO</td><td>Feed and MQTT cloud communication.</td></tr><tr><td>MQTT</td><td>Delivers the feed value to the subscribed device.</td></tr><tr><td>Cargo / ESP flashing tools</td><td>Build and upload firmware for the selected Rust toolchain.</td></tr></tbody></table></div>
+          </section>
+
+          <section class="report-section" id="task3-applet">
+            <h3>6. Siri &amp; IFTTT Configuration</h3>
+            <h4>Voice Trigger</h4>
+            <p>The voice phrase used in the experiment is:</p>
+            <div class="report-flow">“Hey Siri, switch on light”</div>
+            <p>This phrase invokes the Siri shortcut / voice trigger associated with the IFTTT automation. Siri is the voice interface; the connected shortcut or IFTTT integration passes the trigger to the Applet.</p>
+            <h4>IFTTT Applet</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Applet part</th><th>Configuration for this experiment</th></tr></thead><tbody><tr><td>IF</td><td>The Siri phrase / shortcut trigger is invoked.</td></tr><tr><td>THEN</td><td>Update the Adafruit IO <code>bulb-control</code> feed with <code>ON</code>.</td></tr><tr><td>Result</td><td>The ESP32-C3 receives the feed value over MQTT and turns the LED on.</td></tr></tbody></table></div>
+            <p>If the integration uses a named Siri Shortcut or a Webhooks event behind the scenes, its exact label is specific to the configured Applet. The behavior documented here is the observed phrase-to-feed-to-LED workflow.</p>
+          </section>
+
+          <section class="report-section" id="task3-flow">
+            <h3>7. How the Voice Trigger Reaches the Device</h3>
+            <p>The spoken phrase does not connect directly to the ESP32-C3. Siri starts the configured automation, IFTTT performs the cloud action, and Adafruit IO delivers the resulting feed update through MQTT.</p>
+            <div class="report-flow">Voice phrase &rarr; Siri Shortcut &rarr; IFTTT Applet &rarr; Adafruit IO action &rarr; <code>bulb-control</code> feed &rarr; MQTT broker &rarr; ESP32-C3 &rarr; GPIO &rarr; LED</div>
+            <p>This separates voice recognition and automation from embedded device control. The board only needs to maintain its cloud connection and process feed messages.</p>
+          </section>
+
+          <section class="report-section" id="task3-feed">
+            <h3>8. Adafruit IO Feed</h3>
+            <p>The feed used to carry the LED command is <code>bulb-control</code>. The account-specific MQTT topic follows this format:</p>
+            <pre class="report-code"><code>YOUR_ADAFRUIT_USERNAME/feeds/bulb-control</code></pre>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Feed value</th><th>Device behavior</th></tr></thead><tbody><tr><td><code>ON</code></td><td>Set the configured LED GPIO to its active state.</td></tr><tr><td><code>OFF</code></td><td>Set the configured LED GPIO to its inactive state, if an off action is configured.</td></tr></tbody></table></div>
+            <figure class="report-figure"><img src="iot%202/t2.3.png" alt="Adafruit IO bulb-control feed used by the voice-triggered automation"><figcaption>Adafruit IO / bulb-control feed for the voice automation</figcaption></figure>
+          </section>
+
+          <section class="report-section" id="task3-wiring">
+            <h3>9. Wiring / Setup</h3>
+            <p>The ESP32-C3 controls the LED through the GPIO configured in the Rust project. The source material's GPIO 2 is not assumed here: use the exact pin connected in your ESP32-C3 circuit, since pin availability and onboard LED wiring vary between boards.</p>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Connection</th><th>Component</th><th>Function</th></tr></thead><tbody><tr><td>Configured ESP32-C3 GPIO</td><td>LED, with series resistor if external</td><td>Digital output</td></tr><tr><td>GND</td><td>LED circuit</td><td>Ground return</td></tr><tr><td>USB</td><td>ESP32-C3 board</td><td>Power and programming</td></tr></tbody></table></div>
+            <div class="report-flow">ESP32-C3 configured GPIO &rarr; Resistor &rarr; LED &rarr; GND</div>
+            <p>For a HIGH-active LED, active output turns it on. For an active-low onboard LED, the firmware must invert that mapping.</p>
+          </section>
+
+          <section class="report-section" id="task3-implementation">
+            <h3>10. ESP32-C3 Rust Implementation</h3>
+            <p>The ESP32-C3 firmware does not listen for or parse the spoken phrase. It connects to Wi-Fi, subscribes to the Adafruit IO feed, and reacts to the command IFTTT has placed there. In an ESP-IDF Rust project, service and peripheral APIs depend on the configured crate versions and board.</p>
+            <h4>Firmware Responsibilities</h4>
+            <ol><li>Load Wi-Fi and Adafruit IO credentials from private configuration.</li><li>Initialize the ESP32-C3 and configure the LED GPIO.</li><li>Connect to Wi-Fi and the Adafruit IO MQTT service.</li><li>Subscribe to <code>username/feeds/bulb-control</code>.</li><li>Read incoming payloads and recognize <code>ON</code> and, if used, <code>OFF</code>.</li><li>Update the LED output and log useful status for debugging.</li><li>Reconnect and restore the feed subscription if the MQTT connection drops.</li></ol>
+            <h4>Command Handling Logic</h4>
+            <pre class="report-code"><code>fn led_command(payload: &amp;str) -&gt; Option&lt;bool&gt; {
+    match payload.trim() {
+        "ON" =&gt; Some(true),
+        "OFF" =&gt; Some(false),
+        _ =&gt; None,
+    }
+}
+
+// The MQTT event handler decodes the feed payload, calls led_command,
+// then writes the corresponding level to the configured board GPIO.</code></pre>
+            <div class="report-callout"><strong>Code note:</strong> This Rust snippet documents the command decision only; it is not presented as the complete firmware. Use the Wi-Fi, MQTT, and GPIO APIs from the ESP32-C3 project's actual ESP-IDF Rust dependencies and match the LED polarity of the board.</div>
+            <h4>Credential Safety</h4>
+            <p>Wi-Fi passwords and the Adafruit IO key are private credentials. Keep them out of public source code, screenshots, and repository history.</p>
+          </section>
+
+          <section class="report-section" id="task3-automation">
+            <h3>11. Complete Automation Example</h3>
+            <div class="report-flow">Say “Hey Siri, switch on light”<br>&darr;<br>Siri invokes the configured shortcut<br>&darr;<br>IFTTT Applet runs its action<br>&darr;<br>Adafruit IO writes <code>ON</code> to <code>bulb-control</code><br>&darr;<br>MQTT delivers the feed message<br>&darr;<br>ESP32-C3 Rust firmware receives <code>ON</code><br>&darr;<br>Configured LED GPIO becomes active<br>&darr;<br>Light turns on</div>
+            <p>This demonstrates the path from a spoken request to a physical output through voice recognition, cloud automation, IoT messaging, and embedded Rust firmware.</p>
+          </section>
+
+          <section class="report-section" id="task3-evidence">
+            <h3>12. Evidence &amp; Demonstration</h3>
+            <p>The Adafruit IO feed screenshot documents the cloud channel used by the automation. The supplied video is included as the Task 3 demonstration.</p>
+            <figure class="report-figure"><img src="iot%202/t2.3.png" alt="Adafruit IO bulb-control feed screenshot for the Siri and IFTTT experiment"><figcaption>Adafruit IO feed used by the voice-triggered system</figcaption></figure>
+            <h4>Demonstration Video</h4>
+            <p>The clip demonstrates the Task 3 voice-triggered LED experiment.</p>
+            <video class="report-video" controls preload="metadata" aria-label="Siri voice-triggered IFTTT and Adafruit IO LED control demonstration"><source src="iot%202/t2.7.mp4" type="video/mp4">Your browser does not support embedded video. <a href="iot%202/t2.7.mp4">Open the Task 3 demonstration video</a>.</video>
+            <h4>Demonstration Sequence</h4>
+            <ol><li>Show the powered ESP32-C3 setup.</li><li>Show the IFTTT / Siri shortcut configuration and Adafruit IO feed.</li><li>Say “Hey Siri, switch on light.”</li><li>Show the feed update and the physical LED turning on.</li><li>If an OFF phrase is configured, repeat with the off command.</li></ol>
+          </section>
+
+          <section class="report-section" id="task3-testing">
+            <h3>13. Testing</h3>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Test</th><th>Expected behavior</th><th>Result</th></tr></thead><tbody><tr><td>Say “Hey Siri, switch on light”</td><td>Siri invokes the automation; IFTTT writes <code>ON</code> to the feed and the LED turns on.</td><td>Pass, as demonstrated in the experiment.</td></tr><tr><td>Feed receives <code>ON</code></td><td>ESP32-C3 receives the MQTT payload and activates the configured LED output.</td><td>Pass, as demonstrated in the experiment.</td></tr><tr><td>Repeat the voice trigger</td><td>The workflow runs again and the device responds to the updated feed value.</td><td>Verify with the demonstration / feed history.</td></tr><tr><td>OFF command, if configured</td><td>IFTTT writes <code>OFF</code> and the LED turns off.</td><td>Only applicable if an OFF phrase/action was set up.</td></tr></tbody></table></div>
+          </section>
+
+          <section class="report-section" id="task3-challenges">
+            <h3>14. Challenges &amp; Solutions</h3>
+            <h4>Voice Trigger Not Starting</h4><p><strong>Problem:</strong> Siri does not invoke the intended workflow. <strong>Checks:</strong> Confirm the phrase is attached to the correct shortcut / IFTTT trigger, the device recognizes the request, and the shortcut is available to Siri.</p>
+            <h4>IFTTT Action Does Not Update the Feed</h4><p><strong>Problem:</strong> The Applet runs but the Adafruit IO feed does not change. <strong>Checks:</strong> Verify the connected service or action, account credentials, feed key, and value being sent.</p>
+            <h4>ESP32-C3 Does Not Receive the Command</h4><p><strong>Problem:</strong> The feed value changes but the device does not respond. <strong>Checks:</strong> Verify Wi-Fi Internet access, MQTT connection and authentication, and the full feed topic.</p>
+            <h4>LED Does Not Match the Feed Value</h4><p><strong>Problem:</strong> An MQTT command is received but the light does not switch as expected. <strong>Checks:</strong> Confirm the payload string, configured ESP32-C3 GPIO, wiring, and whether the LED is active-high or active-low.</p>
+            <h4>Cloud Connectivity</h4><p><strong>Problem:</strong> The automation relies on Internet access across multiple services. <strong>Solution:</strong> Check the Apple device and ESP32-C3 network connections, then test the Siri trigger, feed update, and MQTT response as separate steps.</p>
+          </section>
+
+          <section class="report-section" id="task3-reflection">
+            <h3>15. Learning Reflection</h3>
+            <p>This task showed how a natural voice command can be connected to a physical IoT output through multiple cloud services. Siri provides the voice interface, IFTTT links the trigger to an action, Adafruit IO carries the command, and MQTT delivers it to the ESP32-C3.</p>
+            <p>Programming the ESP32-C3 in Rust helped me connect embedded firmware responsibilities to that cloud workflow: maintaining connectivity, subscribing to a feed, parsing a message, and controlling a GPIO. The experiment also made clear that the voice trigger and the device firmware are separate parts of the system.</p>
+          </section>
+
+          <section class="report-section" id="task3-repository">
+            <h3>16. Repository</h3>
+            <p>Store the Rust firmware and project documentation with screenshots and the demonstration video. Add the actual repository URL when available, and never commit Wi-Fi passwords or the Adafruit IO key.</p>
+            <p><strong>Repository:</strong> Add your GitHub repository link when available.</p>
+            <h4>Suggested Structure</h4>
+            <pre class="repo-tree">task-3-siri-ifttt-adafruit-io/
+├── Cargo.toml
+├── Cargo.lock
+├── src/
+│   └── main.rs
+├── README.md
+├── ifttt/
+│   └── applet-configuration.png
+├── adafruit-io/
+│   └── bulb-control-feed.png
+├── photos/
+│   └── esp32-c3-setup.jpg
+└── video/
+    └── voice-control-demo.mp4</pre>
+          </section>
+
+          <section class="report-section" id="task3-result">
+            <h3>17. Final Result</h3>
+            <p>The experiment demonstrates voice-initiated IoT LED control: saying “Hey Siri, switch on light” starts the configured shortcut / IFTTT automation. IFTTT updates the Adafruit IO feed, the ESP32-C3 Rust application receives the MQTT value, and the configured GPIO turns the LED on.</p>
+            <div class="report-flow">Hey Siri voice phrase &rarr; IFTTT &rarr; Adafruit IO &rarr; MQTT &rarr; ESP32-C3 Rust firmware &rarr; GPIO &rarr; LED</div>
+          </section>
+        </article>
+      </section>
+      <section class="task-panel" id="task-panel-4" role="tabpanel" aria-labelledby="task-tab-4" tabindex="0" hidden>
+        <article class="task-report">
+          <div class="document-meta"><span>IoT Session / Task 4</span><span>Project Report</span></div>
+          <h2 class="report-title">Forge Web Dashboard</h2>
+          <nav class="report-toc" aria-label="Task 4 report contents">
+            <h3>Contents</h3>
+            <ol>
+              <li><a href="#task4-overview">Overview</a></li>
+              <li><a href="#task4-concepts">Concepts</a></li>
+              <li><a href="#task4-design">System Design</a></li>
+              <li><a href="#task4-components">Hardware &amp; Software</a></li>
+              <li><a href="#task4-setup">Project Setup</a></li>
+              <li><a href="#task4-dashboard">Dashboard Configuration</a></li>
+              <li><a href="#task4-layout">Layout &amp; Local Testing</a></li>
+              <li><a href="#task4-flow">Application Flow</a></li>
+              <li><a href="#task4-data">Data Structure</a></li>
+              <li><a href="#task4-implementation">Implementation</a></li>
+              <li><a href="#task4-code-notes">Important Code Sections</a></li>
+              <li><a href="#task4-evidence">Evidence &amp; Demo</a></li>
+              <li><a href="#task4-checks">Checks Performed</a></li>
+              <li><a href="#task4-challenges">Challenges &amp; Fixes</a></li>
+              <li><a href="#task4-reflection">Reflection</a></li>
+              <li><a href="#task4-repository">Repository</a></li>
+              <li><a href="#task4-result">Final Result</a></li>
+            </ol>
+          </nav>
+
+          <section class="report-section" id="task4-overview">
+            <h3>1. Overview</h3>
+            <h4>Objective</h4>
+            <p>The objective of this task is to design a responsive three-page web dashboard for Forge. The interface presents temperature, humidity, and light readings and provides controls for a bulb, operating mode, light threshold, reading history, and CSV export.</p>
+            <h4>Problem Being Addressed</h4>
+            <p>The earlier experiments controlled an LED through a device-hosted page, an Adafruit IO dashboard, or a voice automation. Forge needs its own interface that brings sign-in, monitoring, and device controls together in one place.</p>
+            <h4>Project Summary</h4>
+            <p>The application is organized as a landing page, sign-in page, and dashboard. Its browser-side structure and responsive presentation are built with HTML, CSS, and JavaScript. Firebase configuration is kept separate and uses placeholders until the Firebase project and ESP32-C3 device integration are completed in Task 5.</p>
+            <div class="report-flow">Landing Page &rarr; Sign In &rarr; Forge Dashboard &rarr; Firebase Authentication / Realtime Database &rarr; ESP32-C3 (Rust) &rarr; Sensors and bulb</div>
+            <div class="report-callout"><strong>Task boundary:</strong> Task 4 focuses on the dashboard interface and browser checks. Live Firebase authentication/data and the ESP32-C3 Rust firmware connection are part of Task 5; placeholder Firebase values do not provide a live cloud connection by themselves.</div>
+          </section>
+
+          <section class="report-section" id="task4-concepts">
+            <h3>2. Concepts</h3>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Concept</th><th>Use in Forge</th></tr></thead><tbody><tr><td>Three-page web app</td><td>Landing page, sign-in page, and sensor/control dashboard.</td></tr><tr><td>HTML, CSS, JavaScript</td><td>Structure, responsive presentation, and browser interactions.</td></tr><tr><td>State management</td><td>Tracks the current bulb command, operating mode, threshold, and readings so the UI can render consistently.</td></tr><tr><td>Manual / automatic mode</td><td>Manual mode follows the user's control; automatic mode displays the device's relay state.</td></tr><tr><td>Light-sensitivity threshold</td><td>Sets the 0–4095 light reading boundary used by automatic control.</td></tr><tr><td>History and CSV export</td><td>Displays recent readings and downloads up to 5000 records.</td></tr><tr><td>Validation and error states</td><td>Gives useful feedback for invalid input, loading, connection, read, and write errors.</td></tr><tr><td>Responsive CSS</td><td>Adapts the card layout for desktop, tablet, and narrow screens.</td></tr><tr><td>Transitions and reduced motion</td><td>Provides state feedback while honoring the user's reduced-motion setting.</td></tr></tbody></table></div>
+          </section>
+
+          <section class="report-section" id="task4-design">
+            <h3>3. System Design</h3>
+            <h4>System Architecture</h4>
+            <div class="report-flow">User &rarr; Forge Web Dashboard &rarr; Firebase Authentication / Realtime Database &rarr; ESP32-C3 Rust Firmware &rarr; Sensors and bulb</div>
+            <p>In this task, the web interface is developed and reviewed. Firebase and the ESP32-C3 are the planned system connections; their live integration is completed in Task 5.</p>
+            <h4>Page Diagram</h4>
+            <div class="report-flow">index.html / Landing page<br>&darr; Sign in<br>login.html / Email or Google authentication<br>&darr; Authenticated<br>dashboard.html / Sensor cards, bulb, mode, threshold, history<br>&darr;<br>Firebase Realtime Database</div>
+            <h4>Data Flow</h4>
+            <ol><li>The user opens the landing page and chooses Sign in.</li><li>The sign-in page validates the entered email/password and requests Firebase Authentication.</li><li>A signed-in user is directed to the dashboard; an unauthenticated user is redirected to sign-in.</li><li>When configured in Task 5, real-time listeners read the bulb state, settings, and recent readings.</li><li>The interface redraws sensor cards, bulb state, mode, and history as data changes.</li><li>User controls write bulb, mode, or threshold changes to the signed-in user's database path.</li><li>The user can request a CSV containing up to 5000 recent readings.</li></ol>
+          </section>
+
+          <section class="report-section" id="task4-components">
+            <h3>4. Hardware &amp; Software</h3>
+            <h4>Hardware and Test Devices</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Item</th><th>Purpose</th></tr></thead><tbody><tr><td>Computer</td><td>Editing the web files and running the local development server.</td></tr><tr><td>Phone / tablet or resized browser</td><td>Reviewing responsive page layouts.</td></tr><tr><td>ESP32-C3 board, DHT11, LDR, bulb/relay</td><td>Used for the device and sensor integration in Task 5; not required for the Task 4 interface checks.</td></tr></tbody></table></div>
+            <h4>Software and Platforms</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Software / platform</th><th>Purpose</th></tr></thead><tbody><tr><td>HTML, CSS, JavaScript</td><td>Build the three-page interface and browser interactions.</td></tr><tr><td>Visual Studio Code</td><td>Editing the project files.</td></tr><tr><td>Google Chrome</td><td>Viewing the pages and checking browser behavior.</td></tr><tr><td>Python HTTP server</td><td>Serving ES modules over localhost during development.</td></tr><tr><td>Firebase Authentication / Realtime Database</td><td>Authentication and live data integration, configured in Task 5.</td></tr><tr><td>Rust / ESP-IDF Rust ecosystem</td><td>ESP32-C3 firmware language and device tooling for Task 5, not the web dashboard language.</td></tr></tbody></table></div>
+          </section>
+
+          <section class="report-section" id="task4-setup">
+            <h3>5. Project Setup &amp; Configuration</h3>
+            <p>The Forge dashboard project is kept separate from the ESP32-C3 firmware. Its browser pages use JavaScript modules, so they should be served over HTTP rather than opened directly as local files.</p>
+            <h4>Project Files</h4>
+            <pre class="repo-tree">forge-dashboard/
+├── index.html
+├── login.html
+├── dashboard.html
+├── style.css
+└── firebase-config.js</pre>
+            <p>The Firebase configuration module holds the app, authentication, and database initialization. It uses placeholder values until the Firebase project is configured in Task 5. Never publish private credentials or service secrets in screenshots or source control.</p>
+            <figure class="report-figure"><img src="iot%203/t4.1.png" alt="Forge dashboard project setup evidence"><figcaption>Task 4 / project and interface setup</figcaption></figure>
+          </section>
+
+          <section class="report-section" id="task4-dashboard">
+            <h3>6. Dashboard Configuration</h3>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Interface element</th><th>Function</th></tr></thead><tbody><tr><td>Status line</td><td>Shows connecting, live with update age, waiting for a reading, or device offline.</td></tr><tr><td>Sensor cards</td><td>Temperature in °C, humidity in %, and light on a 0–4095 scale.</td></tr><tr><td>Bulb card and toggle</td><td>Shows the bulb state with an animated icon and switch.</td></tr><tr><td>Mode selector</td><td>Chooses Manual or Automatic behavior.</td></tr><tr><td>Light-sensitivity slider</td><td>Sets the automatic threshold within 0–4095.</td></tr><tr><td>History table</td><td>Shows the latest 20 readings with time, sensor values, and relay state.</td></tr><tr><td>Export CSV</td><td>Downloads up to the latest 5000 readings.</td></tr></tbody></table></div>
+            <h4>Mode Behavior</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Mode</th><th>Control behavior</th><th>Displayed state</th></tr></thead><tbody><tr><td>Manual</td><td>User can change the bulb toggle.</td><td>Shows the requested manual bulb state.</td></tr><tr><td>Automatic</td><td>Dashboard toggle is disabled; device logic uses sensor threshold and relay behavior.</td><td>Shows the relay state reported by the latest reading.</td></tr></tbody></table></div>
+            <p>The automatic condition described for this project turns the bulb on when the light reading is above the configured threshold. The ESP32-C3 Rust firmware must use the same threshold and mode rules when device integration is implemented.</p>
+            <figure class="report-figure"><img src="iot%203/t4.2.png" alt="Forge dashboard sensor cards and bulb control screenshot"><figcaption>Dashboard / sensor cards and bulb control</figcaption></figure>
+            <figure class="report-figure"><img src="iot%203/t4.3.png" alt="Forge dashboard mode selector and light threshold controls"><figcaption>Dashboard / mode and light threshold</figcaption></figure>
+          </section>
+
+          <section class="report-section" id="task4-layout">
+            <h3>7. Layout &amp; Local Testing</h3>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Feature</th><th>Behavior</th></tr></thead><tbody><tr><td>Card grid</td><td>Three columns on wide desktop; stacks to one column below 760 px.</td></tr><tr><td>History table</td><td>Scrolls horizontally inside its own wrapper on narrow screens.</td></tr><tr><td>Keyboard focus</td><td>Visible focus outlines support keyboard navigation.</td></tr><tr><td>Reduced motion</td><td>Transitions are disabled when the operating system requests reduced motion.</td></tr><tr><td>Local server</td><td>Serves pages and JavaScript modules from localhost.</td></tr></tbody></table></div>
+            <h4>Start the Local Server</h4>
+            <pre class="report-code"><code>python -m http.server 8000</code></pre>
+            <p>Open <code>http://localhost:8000</code> in a browser. A local server is needed because browsers restrict JavaScript modules when a page is opened directly with a <code>file://</code> URL.</p>
+            <figure class="report-figure"><img src="iot%203/t4.4.png" alt="Forge dashboard responsive layout or history and CSV export screenshot"><figcaption>Dashboard / history, export, or responsive layout</figcaption></figure>
+          </section>
+
+          <section class="report-section" id="task4-flow">
+            <h3>8. Application Flow</h3>
+            <div class="report-flow">Landing page &rarr; Sign-in page &rarr; Firebase Authentication &rarr; Dashboard<br><br>Dashboard live listeners: bulb, settings, latest readings<br>Dashboard controls: bulb, mode, threshold<br>History data &rarr; CSV export</div>
+            <h4>Manual Bulb Control</h4>
+            <div class="report-flow">User switches ON in Manual mode &rarr; Dashboard writes <code>true</code> under <code>users/&lt;uid&gt;/bulb</code> &rarr; listener updates UI &rarr; bulb icon and note show the manual state</div>
+            <h4>Automatic Mode</h4>
+            <div class="report-flow">User selects Automatic &rarr; Dashboard stores <code>mode = auto</code> &rarr; toggle is disabled &rarr; displayed bulb follows the reported relay state</div>
+          </section>
+
+          <section class="report-section" id="task4-data">
+            <h3>9. Data Structure</h3>
+            <p>Dashboard data is scoped to the signed-in Firebase user's unique ID:</p>
+            <pre class="report-code"><code>users/&lt;uid&gt;/bulb          true / false
+users/&lt;uid&gt;/settings      { mode: "manual" | "auto", threshold: 0–4095 }
+users/&lt;uid&gt;/readings/&lt;ts&gt; { temperature, humidity, light, relay }</code></pre>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Parameter</th><th>Dashboard behavior</th></tr></thead><tbody><tr><td>Authentication</td><td>Email/password and Google sign-in.</td></tr><tr><td>Live reads</td><td>Bulb state, settings, and latest 20 readings.</td></tr><tr><td>Writes</td><td>Manual bulb state, mode, and threshold.</td></tr><tr><td>Online check</td><td>Latest sensor reading is considered live when less than 15 seconds old.</td></tr><tr><td>CSV columns</td><td><code>time_iso, unix_time, temperature_c, humidity_percent, light_0_4095, bulb</code></td></tr><tr><td>Device source</td><td>ESP32-C3 Rust firmware publishes sensor and relay data as part of Task 5.</td></tr></tbody></table></div>
+          </section>
+
+          <section class="report-section" id="task4-implementation">
+            <h3>10. Implementation</h3>
+            <p>The web application uses plain HTML, CSS, and JavaScript modules. The three pages share a stylesheet; authentication and database functions are imported from Firebase's modular web SDK. The ESP32-C3 remains a separate embedded Rust application and is not replaced by browser-side code.</p>
+            <h4>Firebase Configuration Pattern</h4>
+            <pre class="report-code"><code>// Paste project values from the Firebase Console during Task 5.
+import { initializeApp } from "firebase-app.js";
+import { getAuth } from "firebase-auth.js";
+import { getDatabase } from "firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR-PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR-PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR-PROJECT",
+  appId: "YOUR_APP_ID"
+};</code></pre>
+            <div class="report-callout"><strong>Configuration status:</strong> These are illustrative placeholders from the supplied setup. They must be replaced with the correct Firebase web-app settings before authentication or database calls can work.</div>
+            <h4>Responsive and Accessible Interface</h4>
+            <ul><li>The sensor card grid changes to one column below 760 px.</li><li>The history table can scroll within its own container.</li><li>Inputs and controls have visible keyboard focus styles.</li><li>CSS transitions honor <code>prefers-reduced-motion</code>.</li><li>Sensor values use fixed-width numerals to reduce visual shifting.</li></ul>
+          </section>
+
+          <section class="report-section" id="task4-code-notes">
+            <h3>11. Important Code Sections</h3>
+            <h4>Authentication Guard</h4>
+            <pre class="report-code"><code>onAuthStateChanged(auth, (user) =&gt; {
+  if (!user) { location.replace("login.html"); return; }
+  base = "users/" + user.uid;
+  start();
+});</code></pre>
+            <p>The dashboard requires a signed-in user and uses that user's ID as the root of their database data.</p>
+            <h4>Real-Time Listeners</h4>
+            <p>Firebase <code>onValue</code> listeners update the page when bulb state, settings, or readings change. In Task 5, the ESP32-C3 Rust publisher and dashboard must agree on these paths and data fields.</p>
+            <h4>Manual and Automatic Display</h4>
+            <pre class="report-code"><code>const on = mode === "auto" ? !!(latest &amp;&amp; latest.relay) : bulbWanted;
+toggle.checked = on;
+toggle.disabled = mode === "auto";</code></pre>
+            <p>Manual mode reflects the user's requested state; automatic mode reflects the relay state and prevents manual override through this toggle.</p>
+            <h4>Threshold Validation</h4>
+            <p>The slider is constrained to the ESP32 ADC range, 0–4095, and the value is checked again before writing it to the database.</p>
+            <h4>Loading, Error, and CSV Handling</h4>
+            <p>The UI provides waiting/live/offline status and readable error messages. CSV export requests at most 5000 readings and creates a browser download named <code>forge-readings.csv</code>.</p>
+          </section>
+
+          <section class="report-section" id="task4-evidence">
+            <h3>12. Evidence &amp; Demonstration</h3>
+            <h4>Interface Screenshots</h4>
+            <figure class="report-figure"><img src="iot%203/t4.1.png" alt="Forge landing page or project interface screenshot"><figcaption>Forge / landing page and project setup</figcaption></figure>
+            <figure class="report-figure"><img src="iot%203/t4.2.png" alt="Forge dashboard with sensor cards and bulb toggle"><figcaption>Forge / sensor cards and bulb control</figcaption></figure>
+            <figure class="report-figure"><img src="iot%203/t4.3.png" alt="Forge dashboard manual and automatic modes with light sensitivity slider"><figcaption>Forge / operating mode and threshold control</figcaption></figure>
+            <figure class="report-figure"><img src="iot%203/t4.4.png" alt="Forge dashboard history and CSV export or responsive layout"><figcaption>Forge / history, CSV export, and responsive review</figcaption></figure>
+            <figure class="report-figure"><img src="iot%203/t4.5.png" alt="Additional Forge dashboard evidence"><figcaption>Forge / additional dashboard evidence</figcaption></figure>
+            <h4>Demonstration Video</h4>
+            <video class="report-video" controls preload="metadata" aria-label="Forge web dashboard demonstration"><source src="iot%203/t4.5.mp4" type="video/mp4">Your browser does not support embedded video. <a href="iot%203/t4.5.mp4">Open the Task 4 dashboard demonstration video</a>.</video>
+          </section>
+
+          <section class="report-section" id="task4-checks">
+            <h3>13. Checks Performed</h3>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Check</th><th>Expected result</th><th>Scope</th></tr></thead><tbody><tr><td>Landing page</td><td>Opens; Sign in navigates to the login page.</td><td>Browser interface</td></tr><tr><td>Login validation</td><td>Empty or malformed email and invalid password show a friendly message.</td><td>Client-side validation</td></tr><tr><td>Narrow window</td><td>Sensor cards stack into one column below 760 px.</td><td>Responsive layout</td></tr><tr><td>Phone-sized window</td><td>Content remains readable without page-level overflow.</td><td>Responsive review</td></tr><tr><td>Transitions</td><td>Controls transition smoothly and transitions are disabled for reduced-motion preference.</td><td>UI behavior</td></tr><tr><td>Firebase / device data</td><td>Requires valid Firebase configuration and the Task 5 ESP32-C3 firmware integration.</td><td>Not established by placeholder configuration alone</td></tr></tbody></table></div>
+            <p>The interface checks are separate from end-to-end device verification. Live sensor updates, database writes against a real project, and ESP32-C3 responses should be recorded after the Task 5 integration is configured.</p>
+          </section>
+
+          <section class="report-section" id="task4-challenges">
+            <h3>14. Challenges &amp; Fixes</h3>
+            <h4>Blank Page or Module Error</h4><p><strong>Problem:</strong> The browser refuses module scripts when the page is opened as a local file. <strong>Fix:</strong> Run the local HTTP server and open the page through <code>http://localhost:8000</code>.</p>
+            <h4>Styling Missing</h4><p><strong>Problem:</strong> Pages render without the shared styles. <strong>Fix:</strong> Check that <code>style.css</code> is in the expected project folder and that each page links to the correct path.</p>
+            <h4>Controls Do Not Respond</h4><p><strong>Problem:</strong> A script or module failed to load. <strong>Fix:</strong> Inspect the browser console and network requests, then correct the first failed import or runtime error.</p>
+            <h4>Dashboard Feels Unresponsive</h4><p><strong>Problem:</strong> State changes have no visual feedback. <strong>Fix:</strong> Add short, purposeful transitions to the bulb and toggle while respecting reduced-motion preferences.</p>
+            <h4>Firebase Placeholder Configuration</h4><p><strong>Problem:</strong> Authentication and database operations cannot connect using sample values. <strong>Fix:</strong> Add the actual web app configuration and database rules during Task 5; keep private credentials out of public repository history.</p>
+          </section>
+
+          <section class="report-section" id="task4-reflection">
+            <h3>15. Learning Reflection</h3>
+            <p>This task made the interface and its users the focus. The dashboard brings together sensor values, a bulb control, operating modes, threshold settings, history, and export while accounting for validation, loading, error, and responsive states.</p>
+            <p>I learned that a control's feedback matters: a small transition can make a state change feel clear and immediate. I also learned to separate the web dashboard from the embedded application. The dashboard is built with HTML, CSS, and JavaScript; the ESP32-C3 firmware remains Rust and will exchange data with the configured Firebase project in Task 5.</p>
+          </section>
+
+          <section class="report-section" id="task4-repository">
+            <h3>16. Repository</h3>
+            <p>Add the actual GitHub repository link when available. The dashboard, configuration template, evidence, and documentation should be organized so the web client stays distinct from the ESP32-C3 Rust firmware. Do not commit private Firebase credentials.</p>
+            <p><strong>Repository:</strong> Add your GitHub repository link when available.</p>
+            <h4>Suggested Structure</h4>
+            <pre class="repo-tree">task-4-forge-web-dashboard/
+├── forge-dashboard/
+│   ├── index.html
+│   ├── login.html
+│   ├── dashboard.html
+│   ├── style.css
+│   └── firebase-config.js
+├── esp32-c3-firmware/       Rust project, integrated in Task 5
+├── README.md
+├── screenshots/
+│   ├── landing-and-login.png
+│   ├── dashboard-controls.png
+│   ├── history-export.png
+│   └── responsive-review.png
+└── video/
+    └── dashboard-demo.mp4</pre>
+          </section>
+
+          <section class="report-section" id="task4-result">
+            <h3>17. Final Result</h3>
+            <p>Task 4 delivers the Forge dashboard interface: a landing page, sign-in page, and responsive dashboard for sensor values, bulb state, manual/automatic mode, light threshold, reading history, and CSV export. The browser client uses HTML, CSS, and JavaScript; it is designed for later connection to Firebase and the ESP32-C3 Rust firmware in Task 5.</p>
+            <div class="report-flow">Landing Page &rarr; Sign In &rarr; Forge Dashboard &rarr; Firebase Realtime Database &rarr; ESP32-C3 Rust Firmware &rarr; Sensors and Bulb</div>
+          </section>
+        </article>
+      </section>
+      <section class="task-panel" id="task-panel-5" role="tabpanel" aria-labelledby="task-tab-5" tabindex="0" hidden>
+        <article class="task-report">
+          <div class="document-meta"><span>IoT Session / Task 5</span><span>Project Report</span></div>
+          <h2 class="report-title">Forge Firebase &amp; Real-Time Integration</h2>
+          <nav class="report-toc" aria-label="Task 5 report contents">
+            <h3>Contents</h3>
+            <ol>
+              <li><a href="#task5-overview">Overview</a></li>
+              <li><a href="#task5-concepts">Concepts</a></li>
+              <li><a href="#task5-design">System Design</a></li>
+              <li><a href="#task5-components">Hardware &amp; Software</a></li>
+              <li><a href="#task5-firebase">Firebase Configuration</a></li>
+              <li><a href="#task5-dashboard">Dashboard Configuration</a></li>
+              <li><a href="#task5-wiring">Wiring / Setup</a></li>
+              <li><a href="#task5-communication">Communication Flow</a></li>
+              <li><a href="#task5-database">Database Structure</a></li>
+              <li><a href="#task5-implementation">Rust Implementation</a></li>
+              <li><a href="#task5-explanation">Important Code Sections</a></li>
+              <li><a href="#task5-evidence">Evidence &amp; Demonstration</a></li>
+              <li><a href="#task5-challenges">Challenges &amp; Fixes</a></li>
+              <li><a href="#task5-reflection">Learning Reflection</a></li>
+              <li><a href="#task5-repository">Repository</a></li>
+              <li><a href="#task5-result">Final Result</a></li>
+            </ol>
+          </nav>
+
+          <section class="report-section" id="task5-overview">
+            <h3>1. Overview</h3>
+            <h4>Objective</h4>
+            <p>The goal of this task is to complete Forge as a cloud-connected environmental monitoring and control system. A DHT11 measures temperature and humidity, an LDR measures ambient light, and an ESP32-C3 programmed in Rust sends readings to Firebase. The Task 4 dashboard presents live readings and sends bulb commands; the device uses the configured relay output for manual or automatic operation.</p>
+            <h4>Problem Being Addressed</h4>
+            <p>Task 4 established the dashboard interface, but without a configured backend and device connection its sensor cards cannot show real readings. Earlier control experiments demonstrated separate ways to operate an LED, but did not provide this complete sensor-to-cloud-to-dashboard feedback loop.</p>
+            <h4>Project Summary</h4>
+            <p>The integration brings together the sensor and relay hardware, Firebase Authentication and Realtime Database, the existing web dashboard, and Rust firmware for the ESP32-C3. The firmware samples sensors, smooths the LDR measurement, reads the owner’s control settings, applies the relay logic, and writes timestamped readings. The dashboard listens for updates and can write manual bulb, mode, and threshold settings.</p>
+            <div class="report-flow">DHT11 + LDR &rarr; ESP32-C3 (Rust) &rarr; Firebase Realtime Database &rarr; Web Dashboard<br>Dashboard controls &rarr; Firebase &rarr; ESP32-C3 &rarr; Relay &rarr; Bulb</div>
+            <div class="report-callout"><strong>Board and evidence note:</strong> The supplied Arduino example uses classic ESP32 pin numbers and Arduino libraries. This report adapts the design to ESP32-C3 and Rust: use the actual C3 board's valid GPIO/ADC pins and Rust dependencies. The supplied dashboard screenshots display “ESP32: Simulated Active,” so they document the interface, not by themselves a physical-device end-to-end test.</div>
+          </section>
+
+          <section class="report-section" id="task5-concepts">
+            <h3>2. Concepts</h3>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Concept</th><th>Meaning in Forge</th></tr></thead><tbody>
+              <tr><td>Environmental station</td><td>ESP32-C3, DHT11, LDR, and relay used to monitor and control the room.</td></tr>
+              <tr><td>DHT11</td><td>Digital temperature and humidity sensor; observe its minimum sampling interval, typically at least two seconds.</td></tr>
+              <tr><td>LDR and ADC</td><td>The LDR changes resistance with light. A voltage divider and an ESP32-C3 ADC input convert that level into a numeric reading; confirm the range and pin mapping for the selected C3 board.</td></tr>
+              <tr><td>Noise filtering</td><td>Light values can fluctuate. The experiment averages 15 samples taken 8 ms apart before using the result.</td></tr>
+              <tr><td>Manual override</td><td>The relay follows the bulb value written by the dashboard.</td></tr>
+              <tr><td>Automatic mode and threshold</td><td>The firmware compares the averaged light reading with a dashboard-configured threshold and selects the relay state.</td></tr>
+              <tr><td>Default OFF</td><td>The relay is initialized OFF and returns to OFF when Wi-Fi or Firebase is unavailable.</td></tr>
+              <tr><td>Realtime Database</td><td>Stores hierarchical JSON values and notifies listeners when watched data changes.</td></tr>
+              <tr><td>Flat schema and timestamp keys</td><td>Readings are stored under a per-user path keyed by Unix time, while controls stay in short, separate paths.</td></tr>
+              <tr><td>Authentication and security rules</td><td>Owner and device accounts have separate responsibilities; rules restrict each account to the paths it needs.</td></tr>
+              <tr><td>Real-time listener</td><td>Dashboard code responds to database changes without refreshing or repeatedly polling the page.</td></tr>
+              <tr><td>Cloud Functions / Hosting</td><td>Optional services for alerts, audit records, archiving, or publishing the dashboard; deploy only after testing configuration and billing requirements.</td></tr>
+            </tbody></table></div>
+            <p>Firebase Realtime Database was selected for the live sensor/control stream. Firestore is another Firebase database and can suit document-oriented applications, but the supplied Forge data model is a small real-time tree.</p>
+          </section>
+
+          <section class="report-section" id="task5-design">
+            <h3>3. System Design</h3>
+            <h4>System Architecture</h4>
+            <div class="report-flow">Sensors &rarr; ESP32-C3 Rust Firmware &rarr; Firebase Realtime Database &rarr; Task 4 Web Dashboard<br>Dashboard controls &rarr; Firebase &rarr; ESP32-C3 &rarr; Relay &rarr; Bulb</div>
+            <h4>Device Cycle</h4>
+            <ol><li>Initialize the relay in its OFF state and connect the ESP32-C3 to Wi-Fi.</li><li>Authenticate the device account with Firebase and synchronize the clock for timestamped readings.</li><li>Read the dashboard's bulb, mode, and threshold settings.</li><li>Read temperature and humidity from the DHT11 and average 15 LDR ADC samples, 8 ms apart.</li><li>In manual mode, follow the dashboard bulb setting. In automatic mode, compare the averaged light value with the configured threshold.</li><li>Write temperature, humidity, light, and relay state to the owner's timestamped readings path.</li><li>Allow the dashboard's real-time listeners to update the cards, status, and history.</li><li>If connectivity or authentication is lost, set the relay OFF and resume safely after reconnecting.</li></ol>
+            <div class="report-callout"><strong>Sampling:</strong> One complete sensor record every two seconds corresponds to 43,200 records per day. A 15-sample light average at 8 ms spacing takes about 120 ms, in addition to sensor and cloud operations.</div>
+            <h4>Responsibilities</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Component</th><th>Responsibility</th></tr></thead><tbody><tr><td>ESP32-C3 Rust firmware</td><td>Sample sensors, average light, apply control logic, safely drive the relay, and synchronize records/settings with Firebase.</td></tr><tr><td>Firebase Authentication</td><td>Authenticate the dashboard owner and the separate device account.</td></tr><tr><td>Realtime Database</td><td>Store owner settings and readings and distribute updates to listeners.</td></tr><tr><td>Forge dashboard</td><td>Display live data, provide controls, show history, and export CSV.</td></tr></tbody></table></div>
+          </section>
+
+          <section class="report-section" id="task5-components">
+            <h3>4. Hardware &amp; Software</h3>
+            <h4>Hardware Components</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Component</th><th>Purpose</th></tr></thead><tbody><tr><td>ESP32-C3 development board</td><td>Main Wi-Fi controller running the Rust firmware.</td></tr><tr><td>DHT11 sensor</td><td>Temperature and humidity readings.</td></tr><tr><td>LDR and resistor</td><td>Ambient-light voltage divider for an ADC input.</td></tr><tr><td>Relay module</td><td>Switches the bulb circuit; reuse the earlier relay setup only if its voltage and logic are compatible.</td></tr><tr><td>Breadboard and jumper wires</td><td>Low-voltage circuit prototyping.</td></tr><tr><td>USB cable and Wi-Fi network</td><td>Power/programming and cloud connectivity.</td></tr><tr><td>Bulb/load</td><td>Physical output; keep mains wiring isolated and follow qualified electrical safety procedures.</td></tr></tbody></table></div>
+            <h4>Software and Platforms</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Platform / software</th><th>Purpose</th></tr></thead><tbody><tr><td>Rust and ESP32-C3 Rust toolchain</td><td>Build and flash the device firmware using the project's configured framework/HAL.</td></tr><tr><td>Rust sensor, GPIO, Wi-Fi, and HTTPS support</td><td>Access board peripherals and Firebase endpoints; use crates compatible with the selected target.</td></tr><tr><td>HTML, CSS, JavaScript</td><td>Task 4 web dashboard and Firebase web SDK.</td></tr><tr><td>Firebase Authentication / Realtime Database</td><td>Sign-in, data storage, security rules, and live synchronization.</td></tr><tr><td>Python HTTP server / Chrome</td><td>Run and review the dashboard locally.</td></tr><tr><td>Firebase CLI / Node.js (optional)</td><td>Deploy optional Cloud Functions or Firebase Hosting.</td></tr></tbody></table></div>
+          </section>
+
+          <section class="report-section" id="task5-firebase">
+            <h3>5. Firebase Account &amp; Configuration</h3>
+            <ol><li><strong>Create a project:</strong> Create the Forge project in the Firebase console and select its required settings.</li><li><strong>Create Realtime Database:</strong> Choose the appropriate database region, start with restricted rules, and record the database URL.</li><li><strong>Enable Authentication:</strong> Enable Email/Password and Google sign-in if both are used by the dashboard.</li><li><strong>Create accounts:</strong> Use an owner account for dashboard access and a separate device account for firmware access. Keep the owner UID and device credentials private.</li><li><strong>Register the web app:</strong> Copy the Firebase web configuration into <code>firebase-config.js</code>. Firebase's web API key is part of client configuration, not a substitute for correct Authentication and Database Security Rules.</li><li><strong>Set authorized domains:</strong> Add the dashboard host where required; localhost is used for local testing.</li></ol>
+            <h4>Configuration Template</h4>
+            <pre class="report-code"><code>const firebaseConfig = {
+  apiKey: "YOUR_FIREBASE_WEB_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  appId: "YOUR_WEB_APP_ID"
+};</code></pre>
+            <p>Use the real values from the Firebase project settings locally. Do not publish device passwords, private tokens, or user identifiers in a public repository.</p>
+            <h4>Optional Cloud Services</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Optional service</th><th>Possible use</th><th>Consideration</th></tr></thead><tbody><tr><td>Cloud Functions</td><td>Archive readings older than 30 days, raise an alert above 40 C, or maintain an audit trail of bulb commands.</td><td>Use tested function code; deployment may require a billing-enabled plan.</td></tr><tr><td>Firebase Hosting</td><td>Publish the dashboard at a public HTTPS address.</td><td>Authorize the hosting domain for Authentication and protect database access with rules.</td></tr></tbody></table></div>
+            <p>These services are optional. The supplied sample function text should be treated as a design outline, not deployed without reviewing paths, access controls, region, and error handling.</p>
+          </section>
+
+          <section class="report-section" id="task5-dashboard">
+            <h3>6. Dashboard Configuration</h3>
+            <ol><li>Replace the placeholders in <code>firebase-config.js</code> with this project's web-app configuration.</li><li>Confirm the dashboard host is an authorized Authentication domain.</li><li>Power the ESP32-C3 and check its serial/log output for successful Wi-Fi and Firebase synchronization.</li><li>Serve the dashboard from the project directory with <code>python -m http.server 8000</code>, then open <code>http://localhost:8000</code>.</li></ol>
+            <h4>Dashboard Operation</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Action</th><th>Expected behavior</th></tr></thead><tbody><tr><td>Sign in</td><td>Dashboard opens with data scoped to the signed-in owner.</td></tr><tr><td>Sensor cards</td><td>Show temperature, humidity, and light updates as readings arrive.</td></tr><tr><td>Manual toggle</td><td>Writes the bulb command; the firmware reads it and changes the relay.</td></tr><tr><td>Automatic mode</td><td>Locks manual toggle and displays the relay state selected from light and threshold.</td></tr><tr><td>Sensitivity slider</td><td>Writes a threshold from 0 to 4095.</td></tr><tr><td>History / CSV</td><td>Shows real timestamped readings and exports the available history.</td></tr></tbody></table></div>
+            <p>The Task 4 dashboard already has listeners, control writes, and CSV export. Confirm the database field names and paths match those used by the Rust firmware.</p>
+          </section>
+
+          <section class="report-section" id="task5-wiring">
+            <h3>7. Wiring / Setup</h3>
+            <div class="report-callout"><strong>ESP32-C3 pin note:</strong> The pasted reference uses GPIO 34 and GPIO 26, which are classic ESP32 pin examples and must not be copied blindly to an ESP32-C3. Select valid GPIOs for the exact C3 board, including an ADC-capable input for the LDR, and use the same mapping in the Rust firmware.</div>
+            <h4>Connection Plan</h4>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Signal</th><th>ESP32-C3 connection</th><th>Notes</th></tr></thead><tbody><tr><td>DHT11 DATA</td><td>Configured digital GPIO</td><td>Use 3.3 V compatible wiring; bare DHT11 may need a pull-up resistor.</td></tr><tr><td>DHT11 VCC / GND</td><td>Board 3V3 / GND</td><td>Follow the specific sensor module's rating and pinout.</td></tr><tr><td>LDR divider output</td><td>Configured ADC-capable GPIO</td><td>Use a voltage divider that stays within the ESP32-C3 ADC input limits.</td></tr><tr><td>Relay IN</td><td>Configured output GPIO</td><td>Verify active-high/active-low behavior and relay input compatibility.</td></tr><tr><td>Relay power / ground</td><td>As specified by the relay module</td><td>Do not power a 5 V relay coil from a 3.3 V GPIO.</td></tr></tbody></table></div>
+            <h4>LDR Voltage Divider</h4>
+            <div class="report-flow">3V3 &rarr; fixed resistor &rarr; ADC measurement node &rarr; LDR &rarr; GND</div>
+            <p>This orientation makes the ADC value rise as the room gets darker; reversing the divider changes that relationship. Confirm the measured direction and threshold during bench testing.</p>
+            <h4>Relay Safety</h4>
+            <p>Bench-test the relay using a safe low-voltage load first. Leave mains terminals disconnected during initial testing. Mains wiring must be enclosed, isolated, and handled only with appropriate qualifications and supervision.</p>
+          </section>
+
+          <section class="report-section" id="task5-communication">
+            <h3>8. Communication Flow</h3>
+            <div class="report-flow">DHT11 + LDR &rarr; ESP32-C3 Rust Firmware &rarr; Firebase &rarr; Dashboard<br>Dashboard &rarr; Firebase controls &rarr; ESP32-C3 &rarr; Relay &rarr; Bulb</div>
+            <h4>Live Reading</h4>
+            <div class="report-flow">Read sensors &rarr; average LDR samples &rarr; write <code>readings/&lt;unix_time&gt;</code> &rarr; Firebase listener fires &rarr; dashboard cards and history update</div>
+            <h4>Manual Bulb Control</h4>
+            <div class="report-flow">User toggles ON &rarr; dashboard writes <code>bulb = true</code> &rarr; Rust firmware reads control &rarr; relay turns on</div>
+            <h4>Automatic Mode</h4>
+            <div class="report-flow">Dashboard writes <code>mode = auto</code> and threshold &rarr; firmware compares averaged light with threshold &rarr; relay follows the configured rule</div>
+            <h4>Connection Lost</h4>
+            <div class="report-flow">Wi-Fi / Firebase unavailable &rarr; firmware sets relay OFF &rarr; dashboard data becomes stale or waiting &rarr; reconnect and resume updates</div>
+          </section>
+
+          <section class="report-section" id="task5-database">
+            <h3>9. Database Structure &amp; Security</h3>
+            <p>The proposed Realtime Database schema keeps owner data shallow and readings ordered by timestamp:</p>
+            <pre class="report-code"><code>users/&lt;OWNER_UID&gt;/bulb                 false
+users/&lt;OWNER_UID&gt;/settings/mode        "manual" | "auto"
+users/&lt;OWNER_UID&gt;/settings/threshold   0..4095
+users/&lt;OWNER_UID&gt;/readings/&lt;UNIX_TIME&gt; {
+  temperature, humidity, light, relay
+}</code></pre>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Path / setting</th><th>Purpose / access</th></tr></thead><tbody><tr><td><code>users/&lt;uid&gt;/bulb</code></td><td>Owner controls manual bulb command.</td></tr><tr><td><code>users/&lt;uid&gt;/settings</code></td><td>Owner controls mode and 0–4095 threshold.</td></tr><tr><td><code>users/&lt;uid&gt;/readings/&lt;timestamp&gt;</code></td><td>Device account writes sensor and relay records; owner reads them.</td></tr><tr><td>Authentication</td><td>Dashboard uses email/password or Google; firmware uses a separate device identity.</td></tr></tbody></table></div>
+            <h4>Security Rule Principles</h4>
+            <ul><li>Require authentication for all user data.</li><li>Allow the owner to read their own branch and write their own bulb/settings.</li><li>Allow the dedicated device identity to read only the configured owner's controls and write readings only under that owner.</li><li>Validate bulb as Boolean, mode as <code>manual</code> or <code>auto</code>, threshold as a number from 0 to 4095, and reading fields as the expected types.</li><li>Test allowed and denied access in Firebase Rules Playground before connecting the device.</li></ul>
+            <p>Do not give the device account broad access to every user's branch. Scope its authorization to the intended owner UID, and never put device passwords or private tokens in dashboard JavaScript.</p>
+            <h4>Illustrative Realtime Database Rules</h4>
+            <pre class="report-code"><code>{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null &amp;&amp; (auth.uid === $uid || (auth.token.email === 'DEVICE_EMAIL' &amp;&amp; $uid === 'OWNER_UID'))",
+        "bulb": {
+          ".write": "auth != null &amp;&amp; auth.uid === $uid",
+          ".validate": "newData.isBoolean()"
+        },
+        "settings": {
+          ".write": "auth != null &amp;&amp; auth.uid === $uid",
+          "mode": {
+            ".validate": "newData.isString() &amp;&amp; (newData.val() === 'manual' || newData.val() === 'auto')"
+          },
+          "threshold": {
+            ".validate": "newData.isNumber() &amp;&amp; newData.val() &gt;= 0 &amp;&amp; newData.val() &lt;= 4095"
+          }
+        },
+        "readings": {
+          ".write": "auth != null &amp;&amp; auth.token.email === 'DEVICE_EMAIL' &amp;&amp; $uid === 'OWNER_UID'",
+          "$reading": {
+            ".validate": "newData.hasChildren(['temperature', 'humidity', 'light', 'relay'])",
+            "temperature": { ".validate": "newData.isNumber()" },
+            "humidity": { ".validate": "newData.isNumber()" },
+            "light": { ".validate": "newData.isNumber() &amp;&amp; newData.val() &gt;= 0 &amp;&amp; newData.val() &lt;= 4095" },
+            "relay": { ".validate": "newData.isBoolean()" }
+          }
+        }
+      }
+    }
+  }
+}</code></pre>
+            <p>This is a template: replace the device email and owner UID, review Firebase rule syntax in the console, and test owner/device access separately before publishing. Never use open read/write rules for a deployed database.</p>
+          </section>
+
+          <section class="report-section" id="task5-implementation">
+            <h3>10. ESP32-C3 Rust Implementation</h3>
+            <p>The firmware for this experiment is Rust on ESP32-C3, not the Arduino C++ sketches in the reference material. The exact sensor, Wi-Fi, GPIO, and Firebase HTTPS APIs depend on the Rust framework/crates configured for the board, so the following is the program flow rather than a drop-in compiled source file.</p>
+            <h4>Part 5.1 — Hardware Bench Test (No Cloud)</h4>
+            <p>First test the DHT11, LDR ADC input, light averaging, and relay logic locally. Print raw and averaged readings to the device log, respect the DHT11 sampling interval, and confirm the relay polarity using a safe low-voltage test.</p>
+            <pre class="report-code"><code>// Rust logic sketch; adapt peripheral types and calls to the ESP32-C3 project.
+const LIGHT_SAMPLES: usize = 15;
+const SAMPLE_GAP_MS: u64 = 8;
+const CYCLE_MS: u64 = 2_000;
+
+// Each cycle:
+// 1. Read DHT11 temperature and humidity.
+// 2. Read the configured ADC input 15 times, 8 ms apart; average the samples.
+// 3. Compare the averaged light value with the threshold.
+// 4. Apply manual/automatic relay logic and log raw + averaged values.
+// 5. Wait for the next DHT11-safe sampling interval.</code></pre>
+            <h4>Part 5.2 — Firebase-Connected Firmware</h4>
+            <p>The connected firmware adds Wi-Fi, clock synchronization, device authentication, control reads, and timestamped database writes. Keep credentials in private build-time configuration and never commit them.</p>
+            <pre class="report-code"><code>// Rust control-flow sketch, not crate-specific compile-ready code.
+if !wifi.is_connected() || !firebase.is_ready() {
+    relay.set(false); // safe default OFF
+    reconnect_when_available();
+    return;
+}
+
+let controls = firebase.read_controls(owner_uid)?;
+let sensors = read_environment_and_average_light()?;
+let relay_on = match controls.mode {
+    Mode::Manual =&gt; controls.bulb,
+    Mode::Automatic =&gt; sensors.light &gt; controls.threshold,
+};
+relay.set(relay_on);
+firebase.write_reading(owner_uid, unix_timestamp(), sensors, relay_on)?;</code></pre>
+            <div class="report-callout"><strong>Implementation accuracy:</strong> Use your actual Rust source and crate APIs when adding a complete code listing. The reference's <code>DHT.h</code>, <code>WiFi.h</code>, <code>Firebase_ESP_Client</code>, GPIO 34, and GPIO 26 are not ESP32-C3 Rust code or guaranteed C3 pin assignments.</div>
+            <h4>Optional Cloud Functions and Hosting</h4>
+            <p>Optional functions can archive old readings, create temperature alerts, or record an audit trail. Hosting can publish the dashboard. Treat these as optional extensions, verify function paths and permissions, and check current Firebase billing requirements before deployment.</p>
+          </section>
+
+          <section class="report-section" id="task5-explanation">
+            <h3>11. Explanation of Important Code Sections</h3>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Section</th><th>Behavior</th></tr></thead><tbody><tr><td>DHT11 reads</td><td>Read temperature and humidity no faster than the sensor's supported interval, typically around two seconds.</td></tr><tr><td>15-sample light average</td><td>Take 15 ADC samples 8 ms apart and average them to reduce noisy LDR changes in software.</td></tr><tr><td>Automatic relay logic</td><td>Compare the averaged light value to the configured threshold; manual mode follows the dashboard bulb command.</td></tr><tr><td>Safe default OFF</td><td>Initialize relay to OFF and return it to OFF if Wi-Fi or Firebase is unavailable.</td></tr><tr><td>Clock synchronization</td><td>Synchronize system time before using Unix timestamps as reading keys.</td></tr><tr><td>Device authentication</td><td>Use a separate device account so database rules can distinguish firmware writes from owner controls.</td></tr><tr><td>Control reads and reading writes</td><td>Read bulb/mode/threshold and write one typed sensor/relay record under the owner's timestamped path.</td></tr><tr><td>Dashboard listener</td><td>Firebase <code>onValue</code> updates cards and history when a new reading arrives, without page refresh or dashboard polling.</td></tr></tbody></table></div>
+          </section>
+
+          <section class="report-section" id="task5-evidence">
+            <h3>12. Evidence &amp; Demonstration</h3>
+            <p>The supplied screenshots show the Forge dashboard interface, telemetry visualizations, controls, and history views. The visible “ESP32: Simulated Active” status means these images should be treated as dashboard/simulation evidence unless accompanied by a separate physical-device test.</p>
+            <figure class="report-figure"><img src="iot%203/t4.5.png" alt="Forge telemetry graph and historical log dashboard screenshot"><figcaption>Forge / telemetry graph and historical log</figcaption></figure>
+            <figure class="report-figure"><img src="iot%203/t4.4.png" alt="Forge real-time telemetry graph and readings screenshot"><figcaption>Forge / real-time telemetry view</figcaption></figure>
+            <figure class="report-figure"><img src="iot%203/t4.2.png" alt="Forge environmental cards, bulb control, and automation mode screenshot"><figcaption>Forge / sensor cards, bulb control, and operating modes</figcaption></figure>
+            <figure class="report-figure"><img src="iot%203/t4.3.png" alt="Forge historical readings table and CSV export screenshot"><figcaption>Forge / historical readings and CSV export</figcaption></figure>
+            <video class="report-video" controls preload="metadata" aria-label="Forge Firebase and real-time integration demonstration"><source src="iot%203/t4.5.mp4" type="video/mp4">Your browser does not support embedded video. <a href="iot%203/t4.5.mp4">Open the Task 5 demonstration video</a>.</video>
+            <h4>End-to-End Checklist</h4>
+            <ul><li>ESP32-C3 connects to Wi-Fi and reports successful Firebase synchronization.</li><li>New readings appear under the configured owner path at the expected interval.</li><li>Dashboard cards update without refresh and show current status.</li><li>Manual toggle changes the relay and bulb.</li><li>Automatic mode follows the selected light threshold and disables manual override.</li><li>History and CSV export contain device readings.</li><li>Disconnecting the device causes the relay to default OFF and the dashboard data to become stale; reconnecting resumes updates.</li></ul>
+          </section>
+
+          <section class="report-section" id="task5-challenges">
+            <h3>13. Challenges &amp; Fixes</h3>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Symptom</th><th>Likely cause</th><th>Check / fix</th></tr></thead><tbody><tr><td>DHT read fails</td><td>Wiring or sampling too quickly.</td><td>Check VCC, DATA, GND, selected C3 GPIO, and sensor interval.</td></tr><tr><td>Light value is noisy or unchanged</td><td>LDR divider, ADC mapping, or unstable single sample.</td><td>Check C3 ADC-capable pin and divider; compare raw and 15-sample average.</td></tr><tr><td>Relay polarity is reversed</td><td>Active-low relay input differs from assumed logic.</td><td>Verify module logic with a safe low-voltage load and invert the configured active state if needed.</td></tr><tr><td>No Firebase readings</td><td>Wi-Fi, device credentials, owner UID, database URL, or rules are incorrect.</td><td>Check serial/log output and test device-account permissions in Rules Playground.</td></tr><tr><td>Dashboard says Waiting or shows dashes</td><td>Device is offline, Firebase config is placeholder/incorrect, or database paths do not match.</td><td>Verify Firebase settings, authentication, schema paths, and incoming records.</td></tr><tr><td>Dashboard control has no effect</td><td>Device does not read the same bulb/mode/threshold paths or relay wiring is incorrect.</td><td>Check firmware reads, mode logic, C3 GPIO mapping, relay polarity, and database events.</td></tr><tr><td>Google sign-in fails</td><td>Dashboard origin is not authorized.</td><td>Add the exact development or hosting domain in Firebase Authentication settings.</td></tr></tbody></table></div>
+          </section>
+
+          <section class="report-section" id="task5-reflection">
+            <h3>14. Learning Reflection</h3>
+            <p>This task brings sensor sampling, embedded firmware, cloud storage, access control, and a live dashboard together. The LDR noise showed why averaging can be a practical software filter; the DHT11 also requires respecting its read interval. The relay's manual and automatic modes make control behavior explicit, while a safe OFF state handles loss of connectivity.</p>
+            <p>Firebase connects the device and interface, but also makes data paths and security rules part of the system design. Keeping readings timestamped and the schema shallow supports the dashboard's recent-history query. The ESP32-C3 firmware is Rust, while the dashboard remains HTML, CSS, and JavaScript. End-to-end results should be measured with the actual C3 hardware and distinguished from simulator screenshots.</p>
+          </section>
+
+          <section class="report-section" id="task5-repository">
+            <h3>15. Repository</h3>
+            <p>Add the actual repository link when available. Keep Wi-Fi passwords, device-account credentials, private tokens, and personal user identifiers out of committed files. Use placeholders and private build configuration.</p>
+            <p><strong>Repository:</strong> Add your GitHub repository link when available.</p>
+            <h4>Suggested Structure</h4>
+            <pre class="repo-tree">task-5-forge-firebase-realtime/
+├── firmware/
+│   ├── src/
+│   │   └── main.rs
+│   └── Cargo.toml
+├── firebase/
+│   ├── database.rules.json
+│   └── functions/                 optional
+├── forge-dashboard/
+│   ├── index.html
+│   ├── login.html
+│   ├── dashboard.html
+│   ├── style.css
+│   └── firebase-config.js
+├── README.md
+├── circuit/
+│   └── circuit-diagram.png
+├── screenshots/
+│   ├── firebase-database.png
+│   ├── security-rules.png
+│   ├── dashboard-live.png
+│   └── automatic-mode.png
+└── video/
+    └── demo.mp4</pre>
+          </section>
+
+          <section class="report-section" id="task5-result">
+            <h3>16. Final Result</h3>
+            <p>Task 5 completes the Forge integration by connecting the Task 4 dashboard, Firebase, and ESP32-C3 Rust firmware. The device samples temperature, humidity, and light, publishes timestamped readings, and applies dashboard controls to the relay in manual or automatic mode. The relay defaults OFF when connectivity is unavailable.</p>
+            <div class="report-flow">DHT11 + LDR &rarr; ESP32-C3 Rust Firmware &rarr; Firebase Realtime Database &rarr; Web Dashboard<br>Dashboard Controls &rarr; Firebase &rarr; ESP32-C3 &rarr; Relay &rarr; Bulb</div>
+            <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Reported measurement</th><th>Value</th></tr></thead><tbody><tr><td>Sampling interval</td><td>About 2 seconds (43,200 readings per day if continuous).</td></tr><tr><td>Dashboard synchronization</td><td>About 1–2 seconds.</td></tr><tr><td>Relay response</td><td>About 10 ms, as reported in the supplied experiment notes.</td></tr><tr><td>Database read latency</td><td>About 50–200 ms, as reported in the supplied notes.</td></tr><tr><td>Realtime stream update</td><td>Under one second, as reported in the supplied notes.</td></tr></tbody></table></div>
+            <p>Confirm these measurements on the actual ESP32-C3 setup. The supplied screenshots show simulated dashboard state and are not alone evidence of physical end-to-end measurements.</p>
+          </section>
+        </article>
+      </section>
+    </main>
+    <footer><span>IOT SESSION</span><span>SRIKANTH A · PORTFOLIO</span></footer>
+  </div>
+  <script>
+    const taskTabs = [...document.querySelectorAll('[role="tab"]')];
+    const taskPanels = [...document.querySelectorAll('[role="tabpanel"]')];
+
+    function selectTaskTab(selectedTab, moveFocus = false) {
+      taskTabs.forEach(tab => {
+        const isSelected = tab === selectedTab;
+        tab.setAttribute('aria-selected', String(isSelected));
+        tab.tabIndex = isSelected ? 0 : -1;
+      });
+      taskPanels.forEach(panel => {
+        panel.hidden = panel.id !== selectedTab.getAttribute('aria-controls');
+      });
+      if (moveFocus) selectedTab.focus();
+    }
+
+    taskTabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => selectTaskTab(tab));
+      tab.addEventListener('keydown', event => {
+        let nextIndex = index;
+        if (event.key === 'ArrowRight') nextIndex = (index + 1) % taskTabs.length;
+        else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + taskTabs.length) % taskTabs.length;
+        else if (event.key === 'Home') nextIndex = 0;
+        else if (event.key === 'End') nextIndex = taskTabs.length - 1;
+        else return;
+        event.preventDefault();
+        selectTaskTab(taskTabs[nextIndex], true);
+      });
+    });
+  </script>
+</body>
+</html>
