@@ -24,7 +24,7 @@
     h1,h2,h3{font-family:'Space Grotesk',sans-serif;margin:0}
     h1{font-size:clamp(56px,10vw,112px);line-height:.92;margin:22px 0 26px}
     .task-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:44px}
-    .task-tab{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:62px;padding:14px 18px;border:1px solid var(--strong);background:rgba(11,26,48,.82);color:var(--dim);font:500 12px 'JetBrains Mono',monospace;cursor:pointer;transition:color .2s,background .2s,border-color .2s,transform .2s}
+    .task-tab{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:62px;padding:14px 18px;border:1px solid var(--strong);background:rgba(11,26,48,.82);color:var(--dim);font:500 12px 'JetBrains Mono',monospace;text-decoration:none;cursor:pointer;transition:color .2s,background .2s,border-color .2s,transform .2s}
     .task-tab:hover{color:var(--text);background:var(--panel-2);border-color:var(--accent-2);transform:translateY(-2px)}
     .task-tab[aria-selected="true"]{color:var(--text);border-color:var(--accent);background:linear-gradient(145deg,rgba(76,141,255,.26),rgba(76,141,255,.08));box-shadow:inset 0 -2px var(--accent)}
     .task-tab:focus-visible{outline:2px solid var(--accent-2);outline-offset:-3px}
@@ -84,11 +84,11 @@
       <div class="eyebrow">IOT SESSION</div>
       <h1>IoT<br>Session.</h1>
       <div class="task-tabs" role="tablist" aria-label="IoT session tasks">
-        <button class="task-tab" id="task-tab-1" type="button" role="tab" aria-selected="true" aria-controls="task-panel-1" tabindex="0"><span class="tab-index">01</span><span>TASK 1</span></button>
-        <button class="task-tab" id="task-tab-2" type="button" role="tab" aria-selected="false" aria-controls="task-panel-2" tabindex="-1"><span class="tab-index">02</span><span>TASK 2</span></button>
-        <button class="task-tab" id="task-tab-3" type="button" role="tab" aria-selected="false" aria-controls="task-panel-3" tabindex="-1"><span class="tab-index">03</span><span>TASK 3</span></button>
-        <button class="task-tab" id="task-tab-4" type="button" role="tab" aria-selected="false" aria-controls="task-panel-4" tabindex="-1"><span class="tab-index">04</span><span>TASK 4</span></button>
-        <button class="task-tab" id="task-tab-5" type="button" role="tab" aria-selected="false" aria-controls="task-panel-5" tabindex="-1"><span class="tab-index">05</span><span>TASK 5</span></button>
+        <a class="task-tab" id="task-tab-1" href="?task=1" role="tab" aria-selected="true" aria-controls="task-panel-1" tabindex="0"><span class="tab-index">01</span><span>TASK 1</span></a>
+        <a class="task-tab" id="task-tab-2" href="?task=2" role="tab" aria-selected="false" aria-controls="task-panel-2" tabindex="-1"><span class="tab-index">02</span><span>TASK 2</span></a>
+        <a class="task-tab" id="task-tab-3" href="?task=3" role="tab" aria-selected="false" aria-controls="task-panel-3" tabindex="-1"><span class="tab-index">03</span><span>TASK 3</span></a>
+        <a class="task-tab" id="task-tab-4" href="?task=4" role="tab" aria-selected="false" aria-controls="task-panel-4" tabindex="-1"><span class="tab-index">04</span><span>TASK 4</span></a>
+        <a class="task-tab" id="task-tab-5" href="?task=5" role="tab" aria-selected="false" aria-controls="task-panel-5" tabindex="-1"><span class="tab-index">05</span><span>TASK 5</span></a>
       </div>
       <section class="task-panel" id="task-panel-1" role="tabpanel" aria-labelledby="task-tab-1" tabindex="0">
         <article class="task-report">
@@ -1256,7 +1256,7 @@ firebase.write_reading(owner_uid, unix_timestamp(), sensors, relay_on)?;</code><
     const taskTabs = [...document.querySelectorAll('[role="tab"]')];
     const taskPanels = [...document.querySelectorAll('[role="tabpanel"]')];
 
-    function selectTaskTab(selectedTab, moveFocus = false) {
+    function selectTaskTab(selectedTab, moveFocus = false, updateAddress = false) {
       taskTabs.forEach(tab => {
         const isSelected = tab === selectedTab;
         tab.setAttribute('aria-selected', String(isSelected));
@@ -1265,11 +1265,24 @@ firebase.write_reading(owner_uid, unix_timestamp(), sensors, relay_on)?;</code><
       taskPanels.forEach(panel => {
         panel.hidden = panel.id !== selectedTab.getAttribute('aria-controls');
       });
+      if (updateAddress) history.pushState(null, '', selectedTab.href);
       if (moveFocus) selectedTab.focus();
     }
 
+    function selectTaskFromAddress() {
+      const requestedTask = new URLSearchParams(location.search).get('task');
+      const matchingTab = taskTabs.find(tab => new URL(tab.href).searchParams.get('task') === requestedTask);
+      selectTaskTab(matchingTab || taskTabs[0]);
+    }
+
+    selectTaskFromAddress();
+    window.addEventListener('popstate', selectTaskFromAddress);
+
     taskTabs.forEach((tab, index) => {
-      tab.addEventListener('click', () => selectTaskTab(tab));
+      tab.addEventListener('click', event => {
+        event.preventDefault();
+        selectTaskTab(tab, false, true);
+      });
       tab.addEventListener('keydown', event => {
         let nextIndex = index;
         if (event.key === 'ArrowRight') nextIndex = (index + 1) % taskTabs.length;
@@ -1278,7 +1291,7 @@ firebase.write_reading(owner_uid, unix_timestamp(), sensors, relay_on)?;</code><
         else if (event.key === 'End') nextIndex = taskTabs.length - 1;
         else return;
         event.preventDefault();
-        selectTaskTab(taskTabs[nextIndex], true);
+        selectTaskTab(taskTabs[nextIndex], true, true);
       });
     });
   </script>
